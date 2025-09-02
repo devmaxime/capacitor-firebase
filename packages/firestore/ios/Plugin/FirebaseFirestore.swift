@@ -117,14 +117,15 @@ private actor ListenerRegistrationMap {
 
     @objc public func writeBatch(_ options: WriteBatchOptions, completion: @escaping (Error?) -> Void) {
         let operations = options.getOperations()
+        let databaseId = options.getDatabaseId()
 
-        let batch = Firestore.firestore().batch()
+        let batch = getFirestoreInstance(databaseId: databaseId).batch()
         for operation in operations {
             let type = operation.getType()
             let reference = operation.getReference()
             let data = operation.getData()
 
-            let documentReference = Firestore.firestore().document(reference)
+            let documentReference = getFirestoreInstance(databaseId: databaseId).document(reference)
             switch type {
             case "set":
                 if let setOpts = operation.getOptions(), setOpts.isMerge() {
@@ -158,10 +159,11 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let compositeFilter = options.getCompositeFilter()
         let queryConstraints = options.getQueryConstraints()
+        let databaseId = options.getDatabaseId()
 
         Task {
             do {
-                let collectionReference = Firestore.firestore().collection(reference)
+                let collectionReference = getFirestoreInstance(databaseId: databaseId).collection(reference)
                 var query = collectionReference as Query
                 if let compositeFilter = compositeFilter {
                     if let filter = compositeFilter.toFilter() {
@@ -239,7 +241,8 @@ private actor ListenerRegistrationMap {
 
     @objc public func getCountFromServer(_ options: GetCountFromServerOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
-        let collectionReference = Firestore.firestore().collection(reference)
+        let databaseId = options.getDatabaseId()
+        let collectionReference = getFirestoreInstance(databaseId: databaseId).collection(reference)
         let countQuery = collectionReference.count
 
         Task {

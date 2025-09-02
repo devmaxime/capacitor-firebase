@@ -227,8 +227,9 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_OPERATIONS_MISSING);
                 return;
             }
+            String databaseId = call.getString("databaseId");
 
-            WriteBatchOptions options = new WriteBatchOptions(operations);
+            WriteBatchOptions options = new WriteBatchOptions(operations, databaseId);
             EmptyResultCallback callback = new EmptyResultCallback() {
                 @Override
                 public void success() {
