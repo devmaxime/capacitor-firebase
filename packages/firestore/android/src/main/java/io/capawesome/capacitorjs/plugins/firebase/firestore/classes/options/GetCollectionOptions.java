@@ -23,8 +23,12 @@ public class GetCollectionOptions {
     @Nullable
     private String databaseId;
 
-    public GetCollectionOptions(String reference, @Nullable JSObject compositeFilter, @Nullable JSArray queryConstraints, @Nullable String databaseId)
-        throws JSONException {
+    public GetCollectionOptions(
+        String reference,
+        @Nullable JSObject compositeFilter,
+        @Nullable JSArray queryConstraints,
+        @Nullable String databaseId
+    ) throws JSONException {
         this.reference = reference;
         this.compositeFilter = FirebaseFirestoreHelper.createQueryCompositeFilterConstraintFromJSObject(compositeFilter);
         this.queryConstraints = FirebaseFirestoreHelper.createQueryNonFilterConstraintArrayFromJSArray(queryConstraints);

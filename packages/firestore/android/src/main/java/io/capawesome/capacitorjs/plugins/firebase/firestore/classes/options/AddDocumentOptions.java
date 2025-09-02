@@ -10,6 +10,7 @@ public class AddDocumentOptions {
 
     private String reference;
     private Map<String, Object> data;
+
     @Nullable
     private String databaseId;
 

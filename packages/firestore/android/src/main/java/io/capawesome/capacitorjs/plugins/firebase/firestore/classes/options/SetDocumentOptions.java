@@ -11,6 +11,7 @@ public class SetDocumentOptions {
     private String reference;
     private Map<String, Object> data;
     private boolean merge;
+
     @Nullable
     private String databaseId;
 

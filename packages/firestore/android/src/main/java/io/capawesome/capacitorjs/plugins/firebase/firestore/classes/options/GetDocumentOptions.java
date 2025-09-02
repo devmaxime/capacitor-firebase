@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 public class GetDocumentOptions {
 
     private String reference;
+
     @Nullable
     private String databaseId;
 

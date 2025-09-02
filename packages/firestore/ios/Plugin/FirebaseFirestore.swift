@@ -36,12 +36,20 @@ private actor ListenerRegistrationMap {
         }
     }
 
+    private func getFirestoreInstance(databaseId: String? = nil) -> Firestore {
+        if let databaseId = databaseId, !databaseId.isEmpty {
+            return Firestore.firestore(app: FirebaseApp.app()!, database: databaseId)
+        }
+        return Firestore.firestore()
+    }
+
     @objc public func addDocument(_ options: AddDocumentOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
         let data = options.getData()
+        let databaseId = options.getDatabaseId()
 
         var documentReference: DocumentReference?
-        documentReference = Firestore.firestore().collection(reference).addDocument(data: data) { error in
+        documentReference = getFirestoreInstance(databaseId: databaseId).collection(reference).addDocument(data: data) { error in
             if let error = error {
                 completion(nil, error)
             } else {
@@ -55,8 +63,9 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let data = options.getData()
         let merge = options.getMerge()
+        let databaseId = options.getDatabaseId()
 
-        Firestore.firestore().document(reference).setData(data, merge: merge) { error in
+        getFirestoreInstance(databaseId: databaseId).document(reference).setData(data, merge: merge) { error in
             if let error = error {
                 completion(error)
             } else {
@@ -67,8 +76,9 @@ private actor ListenerRegistrationMap {
 
     @objc public func getDocument(_ options: GetDocumentOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
+        let databaseId = options.getDatabaseId()
 
-        Firestore.firestore().document(reference).getDocument { documentSnapshot, error in
+        getFirestoreInstance(databaseId: databaseId).document(reference).getDocument { documentSnapshot, error in
             if let error = error {
                 completion(nil, error)
             } else {
@@ -81,8 +91,9 @@ private actor ListenerRegistrationMap {
     @objc public func updateDocument(_ options: UpdateDocumentOptions, completion: @escaping (Error?) -> Void) {
         let reference = options.getReference()
         let data = options.getData()
+        let databaseId = options.getDatabaseId()
 
-        Firestore.firestore().document(reference).updateData(data) { error in
+        getFirestoreInstance(databaseId: databaseId).document(reference).updateData(data) { error in
             if let error = error {
                 completion(error)
             } else {
@@ -93,8 +104,9 @@ private actor ListenerRegistrationMap {
 
     @objc public func deleteDocument(_ options: DeleteDocumentOptions, completion: @escaping (Error?) -> Void) {
         let reference = options.getReference()
+        let databaseId = options.getDatabaseId()
 
-        Firestore.firestore().document(reference).delete { error in
+        getFirestoreInstance(databaseId: databaseId).document(reference).delete { error in
             if let error = error {
                 completion(error)
             } else {

@@ -81,8 +81,9 @@ public class FirebaseFirestore {
 
     public void getDocument(@NonNull GetDocumentOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
+        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance()
+        getFirebaseFirestoreInstance(databaseId)
             .document(reference)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
@@ -95,8 +96,9 @@ public class FirebaseFirestore {
     public void updateDocument(@NonNull UpdateDocumentOptions options, @NonNull EmptyResultCallback callback) {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
+        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance()
+        getFirebaseFirestoreInstance(databaseId)
             .document(reference)
             .update(data)
             .addOnSuccessListener(unused -> callback.success())
@@ -105,8 +107,9 @@ public class FirebaseFirestore {
 
     public void deleteDocument(@NonNull DeleteDocumentOptions options, @NonNull EmptyResultCallback callback) {
         String reference = options.getReference();
+        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance()
+        getFirebaseFirestoreInstance(databaseId)
             .document(reference)
             .delete()
             .addOnSuccessListener(unused -> callback.success())
@@ -358,10 +361,7 @@ public class FirebaseFirestore {
 
     private com.google.firebase.firestore.FirebaseFirestore getFirebaseFirestoreInstance(String databaseId) {
         if (databaseId != null && !databaseId.isEmpty()) {
-            return com.google.firebase.firestore.FirebaseFirestore.getInstance(
-                com.google.firebase.FirebaseApp.getInstance(),
-                databaseId
-            );
+            return com.google.firebase.firestore.FirebaseFirestore.getInstance(com.google.firebase.FirebaseApp.getInstance(), databaseId);
         }
         return com.google.firebase.firestore.FirebaseFirestore.getInstance();
     }

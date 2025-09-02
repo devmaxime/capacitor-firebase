@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 public class DeleteDocumentOptions {
 
     private String reference;
+
     @Nullable
     private String databaseId;
 
