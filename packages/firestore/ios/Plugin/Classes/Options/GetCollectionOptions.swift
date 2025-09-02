@@ -5,13 +5,11 @@ import Capacitor
     private var reference: String
     private var compositeFilter: QueryCompositeFilterConstraint?
     private var queryConstraints: [QueryNonFilterConstraint]
-    private var databaseId: String?
 
-    init(reference: String, compositeFilter: JSObject?, queryConstraints: [JSObject]?, databaseId: String? = nil) {
+    init(reference: String, compositeFilter: JSObject?, queryConstraints: [JSObject]?) {
         self.reference = reference
         self.compositeFilter = FirebaseFirestoreHelper.createQueryCompositeFilterConstraintFromJSObject(compositeFilter)
         self.queryConstraints = FirebaseFirestoreHelper.createQueryNonFilterConstraintArrayFromJSArray(queryConstraints)
-        self.databaseId = databaseId
     }
 
     func getReference() -> String {
@@ -24,9 +22,5 @@ import Capacitor
 
     func getQueryConstraints() -> [QueryNonFilterConstraint] {
         return queryConstraints
-    }
-
-    func getDatabaseId() -> String? {
-        return databaseId
     }
 }

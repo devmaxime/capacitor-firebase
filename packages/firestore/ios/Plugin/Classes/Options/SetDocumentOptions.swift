@@ -5,13 +5,11 @@ import Capacitor
     private var reference: String
     private var data: [String: Any]
     private var merge: Bool
-    private var databaseId: String?
 
-    init(reference: String, data: JSObject, merge: Bool, databaseId: String? = nil) {
+    init(reference: String, data: JSObject, merge: Bool) {
         self.reference = reference
         self.data = FirebaseFirestoreHelper.createHashMapFromJSObject(data)
         self.merge = merge
-        self.databaseId = databaseId
     }
 
     func getReference() -> String {
@@ -24,9 +22,5 @@ import Capacitor
 
     func getMerge() -> Bool {
         return merge
-    }
-
-    func getDatabaseId() -> String? {
-        return databaseId
     }
 }

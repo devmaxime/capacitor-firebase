@@ -36,20 +36,12 @@ private actor ListenerRegistrationMap {
         }
     }
 
-    private func getFirestoreInstance(databaseId: String? = nil) -> Firestore {
-        if let databaseId = databaseId, !databaseId.isEmpty {
-            return Firestore.firestore(app: FirebaseApp.app()!, database: databaseId)
-        }
-        return Firestore.firestore()
-    }
-
     @objc public func addDocument(_ options: AddDocumentOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
         let data = options.getData()
-        let databaseId = options.getDatabaseId()
 
         var documentReference: DocumentReference?
-        documentReference = getFirestoreInstance(databaseId: databaseId).collection(reference).addDocument(data: data) { error in
+        documentReference = Firestore.firestore().collection(reference).addDocument(data: data) { error in
             if let error = error {
                 completion(nil, error)
             } else {
@@ -63,9 +55,8 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let data = options.getData()
         let merge = options.getMerge()
-        let databaseId = options.getDatabaseId()
 
-        getFirestoreInstance(databaseId: databaseId).document(reference).setData(data, merge: merge) { error in
+        Firestore.firestore().document(reference).setData(data, merge: merge) { error in
             if let error = error {
                 completion(error)
             } else {
@@ -76,9 +67,8 @@ private actor ListenerRegistrationMap {
 
     @objc public func getDocument(_ options: GetDocumentOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
-        let databaseId = options.getDatabaseId()
 
-        getFirestoreInstance(databaseId: databaseId).document(reference).getDocument { documentSnapshot, error in
+        Firestore.firestore().document(reference).getDocument { documentSnapshot, error in
             if let error = error {
                 completion(nil, error)
             } else {
@@ -91,9 +81,8 @@ private actor ListenerRegistrationMap {
     @objc public func updateDocument(_ options: UpdateDocumentOptions, completion: @escaping (Error?) -> Void) {
         let reference = options.getReference()
         let data = options.getData()
-        let databaseId = options.getDatabaseId()
 
-        getFirestoreInstance(databaseId: databaseId).document(reference).updateData(data) { error in
+        Firestore.firestore().document(reference).updateData(data) { error in
             if let error = error {
                 completion(error)
             } else {
@@ -104,9 +93,8 @@ private actor ListenerRegistrationMap {
 
     @objc public func deleteDocument(_ options: DeleteDocumentOptions, completion: @escaping (Error?) -> Void) {
         let reference = options.getReference()
-        let databaseId = options.getDatabaseId()
 
-        getFirestoreInstance(databaseId: databaseId).document(reference).delete { error in
+        Firestore.firestore().document(reference).delete { error in
             if let error = error {
                 completion(error)
             } else {
@@ -117,15 +105,14 @@ private actor ListenerRegistrationMap {
 
     @objc public func writeBatch(_ options: WriteBatchOptions, completion: @escaping (Error?) -> Void) {
         let operations = options.getOperations()
-        let databaseId = options.getDatabaseId()
 
-        let batch = getFirestoreInstance(databaseId: databaseId).batch()
+        let batch = Firestore.firestore().batch()
         for operation in operations {
             let type = operation.getType()
             let reference = operation.getReference()
             let data = operation.getData()
 
-            let documentReference = getFirestoreInstance(databaseId: databaseId).document(reference)
+            let documentReference = Firestore.firestore().document(reference)
             switch type {
             case "set":
                 if let setOpts = operation.getOptions(), setOpts.isMerge() {
@@ -159,11 +146,10 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let compositeFilter = options.getCompositeFilter()
         let queryConstraints = options.getQueryConstraints()
-        let databaseId = options.getDatabaseId()
 
         Task {
             do {
-                let collectionReference = getFirestoreInstance(databaseId: databaseId).collection(reference)
+                let collectionReference = Firestore.firestore().collection(reference)
                 var query = collectionReference as Query
                 if let compositeFilter = compositeFilter {
                     if let filter = compositeFilter.toFilter() {
@@ -241,8 +227,7 @@ private actor ListenerRegistrationMap {
 
     @objc public func getCountFromServer(_ options: GetCountFromServerOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
-        let databaseId = options.getDatabaseId()
-        let collectionReference = getFirestoreInstance(databaseId: databaseId).collection(reference)
+        let collectionReference = Firestore.firestore().collection(reference)
         let countQuery = collectionReference.count
 
         Task {

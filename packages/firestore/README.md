@@ -663,11 +663,10 @@ Remove all listeners for this plugin.
 
 #### AddDocumentOptions
 
-| Prop             | Type                                                  | Description                                                                                        | Since |
-| ---------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`).                | 5.2.0 |
-| **`data`**       | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                                | 5.2.0 |
-| **`databaseId`** | <code>string</code>                                   | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                                                  | Description                                                                         | Since |
+| --------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`). | 5.2.0 |
+| **`data`**      | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                 | 5.2.0 |
 
 
 #### DocumentData
@@ -675,12 +674,11 @@ Remove all listeners for this plugin.
 
 #### SetDocumentOptions
 
-| Prop             | Type                                                  | Description                                                                                        | Default            | Since |
-| ---------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------ | ----- |
-| **`reference`**  | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`).                |                    | 5.2.0 |
-| **`data`**       | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                                |                    | 5.2.0 |
-| **`merge`**      | <code>boolean</code>                                  | Whether to merge the provided data with an existing document.                                      | <code>false</code> | 5.2.0 |
-| **`databaseId`** | <code>string</code>                                   | The database identifier for the Firestore instance. If not provided, the default database is used. |                    | 7.4.0 |
+| Prop            | Type                                                  | Description                                                                         | Default            | Since |
+| --------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------ | ----- |
+| **`reference`** | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`). |                    | 5.2.0 |
+| **`data`**      | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                 |                    | 5.2.0 |
+| **`merge`**     | <code>boolean</code>                                  | Whether to merge the provided data with an existing document.                       | <code>false</code> | 5.2.0 |
 
 
 #### GetDocumentResult
@@ -710,35 +708,31 @@ Remove all listeners for this plugin.
 
 #### GetDocumentOptions
 
-| Prop             | Type                | Description                                                                                        | Since |
-| ---------------- | ------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`).                | 5.2.0 |
-| **`databaseId`** | <code>string</code> | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                | Description                                                                         | Since |
+| --------------- | ------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`). | 5.2.0 |
 
 
 #### UpdateDocumentOptions
 
-| Prop             | Type                                                  | Description                                                                                        | Since |
-| ---------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`).                | 5.2.0 |
-| **`data`**       | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                                | 5.2.0 |
-| **`databaseId`** | <code>string</code>                                   | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                                                  | Description                                                                         | Since |
+| --------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code>                                   | The reference as a string, with path components separated by a forward slash (`/`). | 5.2.0 |
+| **`data`**      | <code><a href="#documentdata">DocumentData</a></code> | An object containing the data for the new document.                                 | 5.2.0 |
 
 
 #### DeleteDocumentOptions
 
-| Prop             | Type                | Description                                                                                        | Since |
-| ---------------- | ------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`).                | 5.2.0 |
-| **`databaseId`** | <code>string</code> | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                | Description                                                                         | Since |
+| --------------- | ------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`). | 5.2.0 |
 
 
 #### WriteBatchOptions
 
-| Prop             | Type                               | Description                                                                                        | Since |
-| ---------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`operations`** | <code>WriteBatchOperation[]</code> | The operations to execute in the batch.                                                            | 6.1.0 |
-| **`databaseId`** | <code>string</code>                | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop             | Type                               | Description                             | Since |
+| ---------------- | ---------------------------------- | --------------------------------------- | ----- |
+| **`operations`** | <code>WriteBatchOperation[]</code> | The operations to execute in the batch. | 6.1.0 |
 
 
 #### WriteBatchOperation
@@ -823,7 +817,6 @@ Remove all listeners for this plugin.
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 5.2.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 5.2.0 |
 | **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 5.2.0 |
-| **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
 #### QueryCompositeFilterConstraint
@@ -891,7 +884,6 @@ Remove all listeners for this plugin.
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 5.2.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 5.2.0 |
 | **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 5.2.0 |
-| **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
 #### GetCountFromServerResult
@@ -903,10 +895,9 @@ Remove all listeners for this plugin.
 
 #### GetCountFromServerOptions
 
-| Prop             | Type                | Description                                                                                        | Since |
-| ---------------- | ------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`).                | 6.4.0 |
-| **`databaseId`** | <code>string</code> | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                | Description                                                                         | Since |
+| --------------- | ------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`). | 6.4.0 |
 
 
 #### UseEmulatorOptions
@@ -919,10 +910,9 @@ Remove all listeners for this plugin.
 
 #### AddDocumentSnapshotListenerOptions
 
-| Prop             | Type                | Description                                                                                        | Since |
-| ---------------- | ------------------- | -------------------------------------------------------------------------------------------------- | ----- |
-| **`reference`**  | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`).                | 5.2.0 |
-| **`databaseId`** | <code>string</code> | The database identifier for the Firestore instance. If not provided, the default database is used. | 7.4.0 |
+| Prop            | Type                | Description                                                                         | Since |
+| --------------- | ------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`** | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`). | 5.2.0 |
 
 
 #### AddCollectionSnapshotListenerOptions
@@ -932,7 +922,6 @@ Remove all listeners for this plugin.
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 5.2.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 5.2.0 |
 | **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 5.2.0 |
-| **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
 #### AddCollectionGroupSnapshotListenerOptions
@@ -942,7 +931,6 @@ Remove all listeners for this plugin.
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 6.1.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 6.1.0 |
 | **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 6.1.0 |
-| **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
 #### RemoveSnapshotListenerOptions

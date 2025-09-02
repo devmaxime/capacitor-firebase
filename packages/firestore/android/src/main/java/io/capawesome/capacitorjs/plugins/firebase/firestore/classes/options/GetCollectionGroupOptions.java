@@ -20,19 +20,11 @@ public class GetCollectionGroupOptions {
     @NonNull
     private QueryNonFilterConstraint[] queryConstraints;
 
-    @Nullable
-    private String databaseId;
-
-    public GetCollectionGroupOptions(
-        String reference,
-        @Nullable JSObject compositeFilter,
-        @Nullable JSArray queryConstraints,
-        @Nullable String databaseId
-    ) throws JSONException {
+    public GetCollectionGroupOptions(String reference, @Nullable JSObject compositeFilter, @Nullable JSArray queryConstraints)
+        throws JSONException {
         this.reference = reference;
         this.compositeFilter = FirebaseFirestoreHelper.createQueryCompositeFilterConstraintFromJSObject(compositeFilter);
         this.queryConstraints = FirebaseFirestoreHelper.createQueryNonFilterConstraintArrayFromJSArray(queryConstraints);
-        this.databaseId = databaseId;
     }
 
     @NonNull
@@ -48,10 +40,5 @@ public class GetCollectionGroupOptions {
     @NonNull
     public QueryNonFilterConstraint[] getQueryConstraints() {
         return queryConstraints;
-    }
-
-    @Nullable
-    public String getDatabaseId() {
-        return databaseId;
     }
 }

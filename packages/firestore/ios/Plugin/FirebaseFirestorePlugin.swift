@@ -49,9 +49,8 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject(errorDataMissing)
             return
         }
-        let databaseId = call.getString("databaseId")
 
-        let options = AddDocumentOptions(reference: reference, data: data, databaseId: databaseId)
+        let options = AddDocumentOptions(reference: reference, data: data)
 
         implementation?.addDocument(options, completion: { result, error in
             if let error = error {
@@ -75,9 +74,8 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         let merge = call.getBool("merge", false)
-        let databaseId = call.getString("databaseId")
 
-        let options = SetDocumentOptions(reference: reference, data: data, merge: merge, databaseId: databaseId)
+        let options = SetDocumentOptions(reference: reference, data: data, merge: merge)
 
         implementation?.setDocument(options, completion: { error in
             if let error = error {
@@ -94,9 +92,8 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject(errorReferenceMissing)
             return
         }
-        let databaseId = call.getString("databaseId")
 
-        let options = GetDocumentOptions(reference: reference, databaseId: databaseId)
+        let options = GetDocumentOptions(reference: reference)
 
         implementation?.getDocument(options, completion: { result, error in
             if let error = error {
@@ -119,9 +116,8 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject(errorDataMissing)
             return
         }
-        let databaseId = call.getString("databaseId")
 
-        let options = UpdateDocumentOptions(reference: reference, data: data, databaseId: databaseId)
+        let options = UpdateDocumentOptions(reference: reference, data: data)
 
         implementation?.updateDocument(options, completion: { error in
             if let error = error {
@@ -138,9 +134,8 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject(errorReferenceMissing)
             return
         }
-        let databaseId = call.getString("databaseId")
 
-        let options = DeleteDocumentOptions(reference: reference, databaseId: databaseId)
+        let options = DeleteDocumentOptions(reference: reference)
 
         implementation?.deleteDocument(options, completion: { error in
             if let error = error {

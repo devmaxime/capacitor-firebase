@@ -153,14 +153,6 @@ export interface SetDocumentOptions {
    * @default false
    */
   merge?: boolean;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -181,14 +173,6 @@ export interface AddDocumentOptions {
    * @example { first: 'Alan', last: 'Turing', born: 1912 }
    */
   data: DocumentData;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -213,14 +197,6 @@ export interface GetDocumentOptions {
    * @since 5.2.0
    */
   reference: string;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -252,14 +228,6 @@ export interface UpdateDocumentOptions {
    * @example { first: 'Alan', last: 'Turing', born: 1912 }
    */
   data: DocumentData;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -272,14 +240,6 @@ export interface DeleteDocumentOptions {
    * @since 5.2.0
    */
   reference: string;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -292,14 +252,6 @@ export interface WriteBatchOptions {
    * @since 6.1.0
    */
   operations: WriteBatchOperation[];
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -367,14 +319,6 @@ export interface GetCollectionOptions {
    * @since 5.2.0
    */
   queryConstraints?: QueryNonFilterConstraint[];
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -411,14 +355,6 @@ export interface GetCollectionGroupOptions {
    * @since 5.2.0
    */
   queryConstraints?: QueryNonFilterConstraint[];
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -491,14 +427,6 @@ export interface AddDocumentSnapshotListenerOptions
    * @since 5.2.0
    */
   reference: string;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -537,14 +465,6 @@ export interface AddCollectionSnapshotListenerOptions
    * @since 5.2.0
    */
   queryConstraints?: QueryNonFilterConstraint[];
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -584,14 +504,6 @@ export interface AddCollectionGroupSnapshotListenerOptions
    * @since 6.1.0
    */
   queryConstraints?: QueryNonFilterConstraint[];
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**
@@ -633,14 +545,6 @@ export interface GetCountFromServerOptions {
    * @since 6.4.0
    */
   reference: string;
-  /**
-   * The database identifier for the Firestore instance.
-   * If not provided, the default database is used.
-   *
-   * @since 7.4.0
-   * @example 'client1'
-   */
-  databaseId?: string;
 }
 
 /**

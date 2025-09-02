@@ -61,9 +61,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_DATA_MISSING);
                 return;
             }
-            String databaseId = call.getString("databaseId");
 
-            AddDocumentOptions options = new AddDocumentOptions(reference, data, databaseId);
+            AddDocumentOptions options = new AddDocumentOptions(reference, data);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
@@ -98,9 +97,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 return;
             }
             boolean merge = call.getBoolean("merge", false);
-            String databaseId = call.getString("databaseId");
 
-            SetDocumentOptions options = new SetDocumentOptions(reference, data, merge, databaseId);
+            SetDocumentOptions options = new SetDocumentOptions(reference, data, merge);
             EmptyResultCallback callback = new EmptyResultCallback() {
                 @Override
                 public void success() {
@@ -129,9 +127,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_REFERENCE_MISSING);
                 return;
             }
-            String databaseId = call.getString("databaseId");
 
-            GetDocumentOptions options = new GetDocumentOptions(reference, databaseId);
+            GetDocumentOptions options = new GetDocumentOptions(reference);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
@@ -165,9 +162,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_DATA_MISSING);
                 return;
             }
-            String databaseId = call.getString("databaseId");
 
-            UpdateDocumentOptions options = new UpdateDocumentOptions(reference, data, databaseId);
+            UpdateDocumentOptions options = new UpdateDocumentOptions(reference, data);
             EmptyResultCallback callback = new EmptyResultCallback() {
                 @Override
                 public void success() {
@@ -196,9 +192,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_REFERENCE_MISSING);
                 return;
             }
-            String databaseId = call.getString("databaseId");
 
-            DeleteDocumentOptions options = new DeleteDocumentOptions(reference, databaseId);
+            DeleteDocumentOptions options = new DeleteDocumentOptions(reference);
             EmptyResultCallback callback = new EmptyResultCallback() {
                 @Override
                 public void success() {
@@ -227,9 +222,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_OPERATIONS_MISSING);
                 return;
             }
-            String databaseId = call.getString("databaseId");
 
-            WriteBatchOptions options = new WriteBatchOptions(operations, databaseId);
+            WriteBatchOptions options = new WriteBatchOptions(operations);
             EmptyResultCallback callback = new EmptyResultCallback() {
                 @Override
                 public void success() {

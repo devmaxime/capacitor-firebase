@@ -51,9 +51,8 @@ public class FirebaseFirestore {
     public void addDocument(@NonNull AddDocumentOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
-        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance(databaseId)
+        getFirebaseFirestoreInstance()
             .collection(reference)
             .add(data)
             .addOnSuccessListener(documentReference -> {
@@ -67,9 +66,8 @@ public class FirebaseFirestore {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
         boolean merge = options.getMerge();
-        String databaseId = options.getDatabaseId();
 
-        DocumentReference documentReference = getFirebaseFirestoreInstance(databaseId).document(reference);
+        DocumentReference documentReference = getFirebaseFirestoreInstance().document(reference);
         Task<Void> task;
         if (merge) {
             task = documentReference.set(data, SetOptions.merge());
@@ -81,9 +79,8 @@ public class FirebaseFirestore {
 
     public void getDocument(@NonNull GetDocumentOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
-        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance(databaseId)
+        getFirebaseFirestoreInstance()
             .document(reference)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
@@ -96,9 +93,8 @@ public class FirebaseFirestore {
     public void updateDocument(@NonNull UpdateDocumentOptions options, @NonNull EmptyResultCallback callback) {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
-        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance(databaseId)
+        getFirebaseFirestoreInstance()
             .document(reference)
             .update(data)
             .addOnSuccessListener(unused -> callback.success())
@@ -107,9 +103,8 @@ public class FirebaseFirestore {
 
     public void deleteDocument(@NonNull DeleteDocumentOptions options, @NonNull EmptyResultCallback callback) {
         String reference = options.getReference();
-        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance(databaseId)
+        getFirebaseFirestoreInstance()
             .document(reference)
             .delete()
             .addOnSuccessListener(unused -> callback.success())
@@ -118,15 +113,14 @@ public class FirebaseFirestore {
 
     public void writeBatch(@NonNull WriteBatchOptions options, @NonNull EmptyResultCallback callback) {
         WriteBatchOperation[] operations = options.getOperations();
-        String databaseId = options.getDatabaseId();
 
-        WriteBatch batch = getFirebaseFirestoreInstance(databaseId).batch();
+        WriteBatch batch = getFirebaseFirestoreInstance().batch();
         for (WriteBatchOperation operation : operations) {
             String type = operation.getType();
             String reference = operation.getReference();
             Map<String, Object> data = operation.getData();
 
-            DocumentReference documentReference = getFirebaseFirestoreInstance(databaseId).document(reference);
+            DocumentReference documentReference = getFirebaseFirestoreInstance().document(reference);
             switch (type) {
                 case "set":
                     if (operation.getOptions() != null && operation.getOptions().isMerge()) {
@@ -150,9 +144,8 @@ public class FirebaseFirestore {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
-        String databaseId = options.getDatabaseId();
 
-        Query query = getFirebaseFirestoreInstance(databaseId).collection(reference);
+        Query query = getFirebaseFirestoreInstance().collection(reference);
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             if (filter != null) {
@@ -161,7 +154,7 @@ public class FirebaseFirestore {
         }
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
-                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
+                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());
             }
         }
         query
@@ -177,16 +170,15 @@ public class FirebaseFirestore {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
-        String databaseId = options.getDatabaseId();
 
-        Query query = getFirebaseFirestoreInstance(databaseId).collectionGroup(reference);
+        Query query = getFirebaseFirestoreInstance().collectionGroup(reference);
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
-                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
+                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());
             }
         }
         query
@@ -237,8 +229,7 @@ public class FirebaseFirestore {
 
     public void getCountFromServer(@NonNull GetCountFromServerOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
-        String databaseId = options.getDatabaseId();
-        Query query = getFirebaseFirestoreInstance(databaseId).collection(reference);
+        Query query = getFirebaseFirestoreInstance().collection(reference);
         AggregateQuery countQuery = query.count();
 
         countQuery
@@ -360,13 +351,6 @@ public class FirebaseFirestore {
     }
 
     private com.google.firebase.firestore.FirebaseFirestore getFirebaseFirestoreInstance() {
-        return getFirebaseFirestoreInstance(null);
-    }
-
-    private com.google.firebase.firestore.FirebaseFirestore getFirebaseFirestoreInstance(String databaseId) {
-        if (databaseId != null && !databaseId.isEmpty()) {
-            return com.google.firebase.firestore.FirebaseFirestore.getInstance(com.google.firebase.FirebaseApp.getInstance(), databaseId);
-        }
         return com.google.firebase.firestore.FirebaseFirestore.getInstance();
     }
 }
