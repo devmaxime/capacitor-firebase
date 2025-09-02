@@ -260,8 +260,9 @@ public class FirebaseFirestorePlugin extends Plugin {
             }
             JSObject compositeFilter = call.getObject("compositeFilter", null);
             JSArray queryConstraints = call.getArray("queryConstraints", null);
+            String databaseId = call.getString("databaseId");
 
-            GetCollectionOptions options = new GetCollectionOptions(reference, compositeFilter, queryConstraints);
+            GetCollectionOptions options = new GetCollectionOptions(reference, compositeFilter, queryConstraints, databaseId);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
@@ -292,8 +293,9 @@ public class FirebaseFirestorePlugin extends Plugin {
             }
             JSObject compositeFilter = call.getObject("compositeFilter");
             JSArray queryConstraints = call.getArray("queryConstraints");
+            String databaseId = call.getString("databaseId");
 
-            GetCollectionGroupOptions options = new GetCollectionGroupOptions(reference, compositeFilter, queryConstraints);
+            GetCollectionGroupOptions options = new GetCollectionGroupOptions(reference, compositeFilter, queryConstraints, databaseId);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
@@ -410,8 +412,9 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_REFERENCE_MISSING);
                 return;
             }
+            String databaseId = call.getString("databaseId");
 
-            GetCountFromServerOptions options = new GetCountFromServerOptions(reference);
+            GetCountFromServerOptions options = new GetCountFromServerOptions(reference, databaseId);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
