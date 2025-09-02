@@ -1,5 +1,6 @@
 package io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options;
 
+import androidx.annotation.Nullable;
 import com.getcapacitor.JSObject;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFirestoreHelper;
 import java.util.Map;
@@ -11,10 +12,14 @@ public class SetDocumentOptions {
     private Map<String, Object> data;
     private boolean merge;
 
-    public SetDocumentOptions(String reference, JSObject data, boolean merge) throws JSONException {
+    @Nullable
+    private String databaseId;
+
+    public SetDocumentOptions(String reference, JSObject data, boolean merge, @Nullable String databaseId) throws JSONException {
         this.reference = reference;
         this.data = FirebaseFirestoreHelper.createHashMapFromJSONObject(data);
         this.merge = merge;
+        this.databaseId = databaseId;
     }
 
     public String getReference() {
@@ -27,5 +32,10 @@ public class SetDocumentOptions {
 
     public boolean getMerge() {
         return merge;
+    }
+
+    @Nullable
+    public String getDatabaseId() {
+        return databaseId;
     }
 }

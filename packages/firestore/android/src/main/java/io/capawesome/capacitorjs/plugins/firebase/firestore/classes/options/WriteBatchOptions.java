@@ -10,8 +10,12 @@ public class WriteBatchOptions {
 
     private WriteBatchOperation[] operations;
 
-    public WriteBatchOptions(@Nullable JSArray operations) throws JSONException {
+    @Nullable
+    private String databaseId;
+
+    public WriteBatchOptions(@Nullable JSArray operations, @Nullable String databaseId) throws JSONException {
         this.operations = createWriteBatchOperationArrayFromJSArray(operations);
+        this.databaseId = databaseId;
     }
 
     @NonNull
@@ -31,5 +35,10 @@ public class WriteBatchOptions {
     @NonNull
     public WriteBatchOperation[] getOperations() {
         return operations;
+    }
+
+    @Nullable
+    public String getDatabaseId() {
+        return databaseId;
     }
 }
