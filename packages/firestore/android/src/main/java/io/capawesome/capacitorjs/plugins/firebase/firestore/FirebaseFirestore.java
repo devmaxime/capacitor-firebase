@@ -51,8 +51,9 @@ public class FirebaseFirestore {
     public void addDocument(@NonNull AddDocumentOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
+        String databaseId = options.getDatabaseId();
 
-        getFirebaseFirestoreInstance()
+        getFirebaseFirestoreInstance(databaseId)
             .collection(reference)
             .add(data)
             .addOnSuccessListener(documentReference -> {
@@ -66,8 +67,9 @@ public class FirebaseFirestore {
         String reference = options.getReference();
         Map<String, Object> data = options.getData();
         boolean merge = options.getMerge();
+        String databaseId = options.getDatabaseId();
 
-        DocumentReference documentReference = getFirebaseFirestoreInstance().document(reference);
+        DocumentReference documentReference = getFirebaseFirestoreInstance(databaseId).document(reference);
         Task<Void> task;
         if (merge) {
             task = documentReference.set(data, SetOptions.merge());
@@ -351,6 +353,16 @@ public class FirebaseFirestore {
     }
 
     private com.google.firebase.firestore.FirebaseFirestore getFirebaseFirestoreInstance() {
+        return getFirebaseFirestoreInstance(null);
+    }
+
+    private com.google.firebase.firestore.FirebaseFirestore getFirebaseFirestoreInstance(String databaseId) {
+        if (databaseId != null && !databaseId.isEmpty()) {
+            return com.google.firebase.firestore.FirebaseFirestore.getInstance(
+                com.google.firebase.FirebaseApp.getInstance(),
+                databaseId
+            );
+        }
         return com.google.firebase.firestore.FirebaseFirestore.getInstance();
     }
 }

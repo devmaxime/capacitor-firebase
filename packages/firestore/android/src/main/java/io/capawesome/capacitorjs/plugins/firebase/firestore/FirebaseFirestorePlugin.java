@@ -61,8 +61,9 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_DATA_MISSING);
                 return;
             }
+            String databaseId = call.getString("databaseId");
 
-            AddDocumentOptions options = new AddDocumentOptions(reference, data);
+            AddDocumentOptions options = new AddDocumentOptions(reference, data, databaseId);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {
