@@ -447,13 +447,15 @@ public class FirebaseFirestorePlugin extends Plugin {
             }
             Boolean includeMetadataChanges = call.getBoolean("includeMetadataChanges");
             String callbackId = call.getCallbackId();
+            String databaseId = call.getString("databaseId");
 
             this.pluginCallMap.put(callbackId, call);
 
             AddDocumentSnapshotListenerOptions options = new AddDocumentSnapshotListenerOptions(
                 reference,
                 includeMetadataChanges,
-                callbackId
+                callbackId,
+                databaseId
             );
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
@@ -489,6 +491,7 @@ public class FirebaseFirestorePlugin extends Plugin {
             JSArray queryConstraints = call.getArray("queryConstraints");
             Boolean includeMetadataChanges = call.getBoolean("includeMetadataChanges");
             String callbackId = call.getCallbackId();
+            String databaseId = call.getString("databaseId");
 
             this.pluginCallMap.put(callbackId, call);
 
@@ -497,7 +500,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 compositeFilter,
                 queryConstraints,
                 includeMetadataChanges,
-                callbackId
+                callbackId,
+                databaseId
             );
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
@@ -533,6 +537,7 @@ public class FirebaseFirestorePlugin extends Plugin {
             JSArray queryConstraints = call.getArray("queryConstraints");
             Boolean includeMetadataChanges = call.getBoolean("includeMetadataChanges");
             String callbackId = call.getCallbackId();
+            String databaseId = call.getString("databaseId");
 
             this.pluginCallMap.put(callbackId, call);
 
@@ -541,7 +546,8 @@ public class FirebaseFirestorePlugin extends Plugin {
                 compositeFilter,
                 queryConstraints,
                 includeMetadataChanges,
-                callbackId
+                callbackId,
+                databaseId
             );
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
