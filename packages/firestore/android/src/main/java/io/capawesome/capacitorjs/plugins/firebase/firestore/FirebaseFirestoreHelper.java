@@ -92,6 +92,7 @@ public class FirebaseFirestoreHelper {
                         constraint = new QueryOrderByConstraint(queryConstraint);
                         break;
                     case "limit":
+                    case "limitToLast":
                         constraint = new QueryLimitConstraint(queryConstraint);
                         break;
                     case "startAt":
