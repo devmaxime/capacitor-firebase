@@ -5,11 +5,13 @@ import static io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFires
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
+import com.google.firebase.firestore.Filter;
 import com.getcapacitor.JSObject;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryCompositeFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryEndAtConstraint;
+import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryFieldFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryLimitConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryOrderByConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryStartAtConstraint;
@@ -75,6 +77,35 @@ public class FirebaseFirestoreHelper {
         }
     }
 
+    @Nullable
+    public static Filter createFilterFromWhereConstraints(@Nullable JSArray queryConstraints)
+        throws JSONException {
+        if (queryConstraints == null) {
+            return null;
+        }
+        
+        ArrayList<Filter> filters = new ArrayList<>();
+        for (int i = 0; i < queryConstraints.length(); i++) {
+            JSObject queryConstraint = JSObject.fromJSONObject(queryConstraints.getJSONObject(i));
+            String queryConstraintType = queryConstraint.getString("type");
+            if ("where".equals(queryConstraintType)) {
+                QueryFieldFilterConstraint whereConstraint = new QueryFieldFilterConstraint(queryConstraint);
+                Filter filter = whereConstraint.toFilter();
+                if (filter != null) {
+                    filters.add(filter);
+                }
+            }
+        }
+        
+        if (filters.isEmpty()) {
+            return null;
+        } else if (filters.size() == 1) {
+            return filters.get(0);
+        } else {
+            return Filter.and(filters.toArray(new Filter[0]));
+        }
+    }
+
     @NonNull
     public static QueryNonFilterConstraint[] createQueryNonFilterConstraintArrayFromJSArray(@Nullable JSArray queryConstraints)
         throws JSONException {
@@ -102,6 +133,10 @@ public class FirebaseFirestoreHelper {
                     case "endAt":
                     case "endBefore":
                         constraint = new QueryEndAtConstraint(queryConstraint);
+                        break;
+                    case "where":
+                        // Skip where constraints - they should be handled as filter constraints
+                        // This prevents null entries and allows them to be processed separately
                         break;
                     default:
                         // Skip unsupported constraint types instead of creating null entries

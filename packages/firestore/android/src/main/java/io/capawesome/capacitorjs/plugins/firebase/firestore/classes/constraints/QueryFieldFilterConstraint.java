@@ -26,6 +26,21 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
         this.value = FirebaseFirestoreHelper.createObjectFromJSValue(queryConstraint.get("value"));
     }
 
+    @NonNull
+    public String getFieldPath() {
+        return fieldPath;
+    }
+
+    @NonNull
+    public String getOpStr() {
+        return opStr;
+    }
+
+    @NonNull
+    public Object getValue() {
+        return value;
+    }
+
     @Nullable
     public Filter toFilter() {
         switch (opStr) {

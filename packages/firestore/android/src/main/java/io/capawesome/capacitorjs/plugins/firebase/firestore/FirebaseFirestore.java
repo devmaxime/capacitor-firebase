@@ -280,14 +280,30 @@ public class FirebaseFirestore {
     ) throws Exception {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
+        Filter whereFilter = options.getWhereFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
         String callbackId = options.getCallbackId();
 
         Query query = getFirebaseFirestoreInstance().collection(reference);
+        
+        // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
+        
+        // Apply where constraints from queryConstraints array
+        if (whereFilter != null) {
+            if (compositeFilter != null) {
+                // Combine both filters with "and" logic
+                Filter combinedFilter = Filter.and(compositeFilter.toFilter(), whereFilter);
+                query = getFirebaseFirestoreInstance().collection(reference).where(combinedFilter);
+            } else {
+                query = query.where(whereFilter);
+            }
+        }
+        
+        // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
                 query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());
@@ -314,14 +330,30 @@ public class FirebaseFirestore {
     ) throws Exception {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
+        Filter whereFilter = options.getWhereFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
         String callbackId = options.getCallbackId();
 
         Query query = getFirebaseFirestoreInstance().collectionGroup(reference);
+        
+        // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
+        
+        // Apply where constraints from queryConstraints array
+        if (whereFilter != null) {
+            if (compositeFilter != null) {
+                // Combine both filters with "and" logic
+                Filter combinedFilter = Filter.and(compositeFilter.toFilter(), whereFilter);
+                query = getFirebaseFirestoreInstance().collectionGroup(reference).where(combinedFilter);
+            } else {
+                query = query.where(whereFilter);
+            }
+        }
+        
+        // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
                 query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());

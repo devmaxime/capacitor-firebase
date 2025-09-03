@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.google.firebase.firestore.Filter;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFirestoreHelper;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryCompositeFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.QueryNonFilterConstraint;
@@ -16,6 +17,9 @@ public class AddCollectionGroupSnapshotListenerOptions {
 
     @Nullable
     private QueryCompositeFilterConstraint compositeFilter;
+
+    @Nullable
+    private Filter whereFilter;
 
     @NonNull
     private QueryNonFilterConstraint[] queryConstraints;
@@ -37,6 +41,7 @@ public class AddCollectionGroupSnapshotListenerOptions {
     ) throws JSONException {
         this.reference = reference;
         this.compositeFilter = FirebaseFirestoreHelper.createQueryCompositeFilterConstraintFromJSObject(compositeFilter);
+        this.whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(queryConstraints);
         this.queryConstraints = FirebaseFirestoreHelper.createQueryNonFilterConstraintArrayFromJSArray(queryConstraints);
         this.includeMetadataChanges = includeMetadataChanges == null ? false : includeMetadataChanges;
         this.callbackId = callbackId;
@@ -50,6 +55,11 @@ public class AddCollectionGroupSnapshotListenerOptions {
     @Nullable
     public QueryCompositeFilterConstraint getCompositeFilter() {
         return compositeFilter;
+    }
+
+    @Nullable
+    public Filter getWhereFilter() {
+        return whereFilter;
     }
 
     @NonNull
