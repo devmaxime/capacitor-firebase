@@ -81,28 +81,36 @@ public class FirebaseFirestoreHelper {
         if (queryConstraints == null) {
             return new QueryNonFilterConstraint[0];
         } else {
-            QueryNonFilterConstraint[] queryNonFilterConstraint = new QueryNonFilterConstraint[queryConstraints.length()];
+            // Use ArrayList to filter out unsupported constraint types
+            ArrayList<QueryNonFilterConstraint> validConstraints = new ArrayList<>();
             for (int i = 0; i < queryConstraints.length(); i++) {
                 JSObject queryConstraint = JSObject.fromJSONObject(queryConstraints.getJSONObject(i));
                 String queryConstraintType = queryConstraint.getString("type");
+                QueryNonFilterConstraint constraint = null;
                 switch (queryConstraintType) {
                     case "orderBy":
-                        queryNonFilterConstraint[i] = new QueryOrderByConstraint(queryConstraint);
+                        constraint = new QueryOrderByConstraint(queryConstraint);
                         break;
                     case "limit":
-                        queryNonFilterConstraint[i] = new QueryLimitConstraint(queryConstraint);
+                        constraint = new QueryLimitConstraint(queryConstraint);
                         break;
                     case "startAt":
                     case "startAfter":
-                        queryNonFilterConstraint[i] = new QueryStartAtConstraint(queryConstraint);
+                        constraint = new QueryStartAtConstraint(queryConstraint);
                         break;
                     case "endAt":
                     case "endBefore":
-                        queryNonFilterConstraint[i] = new QueryEndAtConstraint(queryConstraint);
+                        constraint = new QueryEndAtConstraint(queryConstraint);
+                        break;
+                    default:
+                        // Skip unsupported constraint types instead of creating null entries
                         break;
                 }
+                if (constraint != null) {
+                    validConstraints.add(constraint);
+                }
             }
-            return queryNonFilterConstraint;
+            return validConstraints.toArray(new QueryNonFilterConstraint[0]);
         }
     }
 
