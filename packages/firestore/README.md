@@ -31,9 +31,84 @@ If needed, you can define the following project variable in your app’s `variab
 
 This can be useful if you encounter dependency conflicts with other plugins in your project.
 
+## Recent Fixes
+
+This plugin has been updated with important bug fixes and enhancements:
+
+- **✅ Fixed snapshot listener crashes**: Resolved null pointer exceptions when using unsupported query constraints
+- **✅ Fixed where constraints being ignored**: Where constraints in snapshot listeners now work correctly with multiple databases
+- **✅ Added `limitToLast` support**: `limitToLast` constraint type is now fully supported in snapshot listeners
+- **✅ Fixed multiple database support**: Constructor parameter mismatches that caused compilation errors have been resolved
+- **✅ iOS parity**: All Android fixes have been replicated to iOS for consistent behavior across platforms
+
+These fixes ensure that snapshot listeners work reliably with multiple Firestore databases and properly respect all query constraints including where clauses.
+
 ## Configuration
 
 No configuration required for this plugin.
+
+## Multiple Database Support
+
+This plugin supports multiple Firestore databases within a single Firebase project. To use a specific database, include the `databaseId` parameter in your method calls:
+
+```typescript
+// Using the default database
+await FirebaseFirestore.addDocument({
+  reference: 'users',
+  data: { name: 'John Doe' }
+});
+
+// Using a specific database
+await FirebaseFirestore.addDocument({
+  reference: 'users',
+  data: { name: 'John Doe' },
+  databaseId: 'chat-db'
+});
+```
+
+The following methods support the optional `databaseId` parameter:
+- `addDocument`
+- `setDocument`
+- `getDocument`
+- `updateDocument`
+- `deleteDocument`
+- `writeBatch`
+- `getCollection`
+- `getCollectionGroup`
+- `getCountFromServer`
+- `addDocumentSnapshotListener`
+- `addCollectionSnapshotListener`
+- `addCollectionGroupSnapshotListener`
+
+When `databaseId` is not provided, the default database is used.
+
+### Snapshot Listener Enhancements
+
+Snapshot listeners now support:
+
+1. **Where constraints directly in `queryConstraints`**: You can include where constraints directly in the `queryConstraints` array alongside orderBy, limit, and other constraints. They will be automatically combined with any `compositeFilter` using "and" logic.
+
+2. **`limitToLast` constraint support**: The `limitToLast` constraint type is now fully supported in snapshot listeners, allowing you to retrieve the last N documents based on ordering.
+
+3. **Multiple where constraints**: Multiple where constraints in the `queryConstraints` array are automatically combined with "and" logic.
+
+Example with where constraints in `queryConstraints`:
+```typescript
+const callbackId = await FirebaseFirestore.addCollectionSnapshotListener(
+  {
+    reference: 'messages',
+    queryConstraints: [
+      // Where constraints work directly here
+      { type: 'where', fieldPath: 'userId', opStr: '==', value: 'user123' },
+      { type: 'where', fieldPath: 'status', opStr: '==', value: 'active' },
+      // Combined with other constraints
+      { type: 'orderBy', fieldPath: 'timestamp', directionStr: 'desc' },
+      { type: 'limitToLast', limit: 20 }
+    ]
+  },
+  callback
+);
+```
 
 ## Demo
 
@@ -239,6 +314,47 @@ const addCollectionSnapshotListener = async () => {
         },
         {
           type: 'limit',
+          limit: 10,
+        },
+      ],
+    },
+    (event, error) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(event);
+      }
+    }
+  );
+  return callbackId;
+};
+
+// Snapshot listener with multiple database support and where constraints
+const addCollectionSnapshotListenerWithDatabase = async () => {
+  const callbackId = await FirebaseFirestore.addCollectionSnapshotListener(
+    {
+      reference: 'chat_messages',
+      databaseId: 'chat-db', // Use specific database
+      queryConstraints: [
+        {
+          type: 'where',
+          fieldPath: 'recipient_id',
+          opStr: '==',
+          value: 'user123',
+        },
+        {
+          type: 'where',
+          fieldPath: 'status',
+          opStr: '==',
+          value: 'sent',
+        },
+        {
+          type: 'orderBy',
+          fieldPath: 'scheduled_date',
+          directionStr: 'desc',
+        },
+        {
+          type: 'limitToLast', // Now supported!
           limit: 10,
         },
       ],
@@ -931,7 +1047,7 @@ Remove all listeners for this plugin.
 | ---------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 5.2.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 5.2.0 |
-| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 5.2.0 |
+| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve. **Note**: Where constraints (`QueryFieldFilterConstraint`) are also supported and will be combined with any `compositeFilter` using "and" logic. | 5.2.0 |
 | **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
@@ -941,7 +1057,7 @@ Remove all listeners for this plugin.
 | ---------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 6.1.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 6.1.0 |
-| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 6.1.0 |
+| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve. **Note**: Where constraints (`QueryFieldFilterConstraint`) are also supported and will be combined with any `compositeFilter` using "and" logic. | 6.1.0 |
 | **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
