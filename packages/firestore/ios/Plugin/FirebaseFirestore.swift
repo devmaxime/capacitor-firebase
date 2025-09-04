@@ -189,10 +189,11 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let compositeFilter = options.getCompositeFilter()
         let queryConstraints = options.getQueryConstraints()
+        let databaseId = options.getDatabaseId()
 
         Task {
             do {
-                let collectionReference = Firestore.firestore().collectionGroup(reference)
+                let collectionReference = getFirestoreInstance(databaseId: databaseId).collectionGroup(reference)
                 var query = collectionReference as Query
                 if let compositeFilter = compositeFilter {
                     if let filter = compositeFilter.toFilter() {
@@ -260,8 +261,9 @@ private actor ListenerRegistrationMap {
         let reference = options.getReference()
         let includeMetadataChanges = options.getIncludeMetadataChanges()
         let callbackId = options.getCallbackId()
+        let databaseId = options.getDatabaseId()
 
-        let listenerRegistration = Firestore.firestore().document(reference).addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { documentSnapshot, error in
+        let listenerRegistration = getFirestoreInstance(databaseId: databaseId).document(reference).addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { documentSnapshot, error in
             if let error = error {
                 completion(nil, error)
             } else {
@@ -280,16 +282,26 @@ private actor ListenerRegistrationMap {
         let queryConstraints = options.getQueryConstraints()
         let includeMetadataChanges = options.getIncludeMetadataChanges()
         let callbackId = options.getCallbackId()
+        let databaseId = options.getDatabaseId()
 
         Task {
             do {
-                let collectionReference = Firestore.firestore().collection(reference)
+                let collectionReference = getFirestoreInstance(databaseId: databaseId).collection(reference)
                 var query = collectionReference as Query
+                
+                // Apply compositeFilter if provided
                 if let compositeFilter = compositeFilter {
                     if let filter = compositeFilter.toFilter() {
                         query = query.whereFilter(filter)
                     }
                 }
+                
+                // Extract and apply where constraints from queryConstraints array
+                if let whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints()) {
+                    query = query.whereFilter(whereFilter)
+                }
+                
+                // Apply non-filter constraints (orderBy, limit, etc.)
                 if !queryConstraints.isEmpty {
                     for queryConstraint in queryConstraints {
                         query = try await queryConstraint.toQuery(query: query)
@@ -317,16 +329,26 @@ private actor ListenerRegistrationMap {
         let queryConstraints = options.getQueryConstraints()
         let includeMetadataChanges = options.getIncludeMetadataChanges()
         let callbackId = options.getCallbackId()
+        let databaseId = options.getDatabaseId()
 
         Task {
             do {
-                let collectionReference = Firestore.firestore().collectionGroup(reference)
+                let collectionReference = getFirestoreInstance(databaseId: databaseId).collectionGroup(reference)
                 var query = collectionReference as Query
+                
+                // Apply compositeFilter if provided
                 if let compositeFilter = compositeFilter {
                     if let filter = compositeFilter.toFilter() {
                         query = query.whereFilter(filter)
                     }
                 }
+                
+                // Extract and apply where constraints from queryConstraints array
+                if let whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints()) {
+                    query = query.whereFilter(whereFilter)
+                }
+                
+                // Apply non-filter constraints (orderBy, limit, etc.)
                 if !queryConstraints.isEmpty {
                     for queryConstraint in queryConstraints {
                         query = try await queryConstraint.toQuery(query: query)

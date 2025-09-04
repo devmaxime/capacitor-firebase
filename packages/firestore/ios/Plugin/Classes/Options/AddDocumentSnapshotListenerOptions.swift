@@ -4,11 +4,13 @@ import Foundation
     private var reference: String
     private var includeMetadataChanges: Bool
     private var callbackId: String
+    private var databaseId: String?
 
-    init(reference: String, includeMetadataChanges: Bool, callbackId: String) {
+    init(reference: String, includeMetadataChanges: Bool, callbackId: String, databaseId: String? = nil) {
         self.reference = reference
         self.includeMetadataChanges = includeMetadataChanges
         self.callbackId = callbackId
+        self.databaseId = databaseId
     }
 
     func getReference() -> String {
@@ -21,5 +23,9 @@ import Foundation
 
     func getCallbackId() -> String {
         return callbackId
+    }
+
+    func getDatabaseId() -> String? {
+        return databaseId
     }
 }
