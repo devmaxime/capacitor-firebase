@@ -24,6 +24,8 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
         this.fieldPath = queryConstraint.getString("fieldPath", "");
         this.opStr = queryConstraint.getString("opStr", "");
         this.value = FirebaseFirestoreHelper.createObjectFromJSValue(queryConstraint.get("value"));
+        
+        android.util.Log.d("QueryFieldFilterConstraint", "Constructor: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value);
     }
 
     @NonNull
@@ -43,28 +45,41 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
 
     @Nullable
     public Filter toFilter() {
+        android.util.Log.d("QueryFieldFilterConstraint", "toFilter: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value);
+        
         switch (opStr) {
             case "<":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating lessThan filter");
                 return Filter.lessThan(fieldPath, value);
             case "<=":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating lessThanOrEqualTo filter");
                 return Filter.lessThanOrEqualTo(fieldPath, value);
             case "==":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating equalTo filter");
                 return Filter.equalTo(fieldPath, value);
             case ">=":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating greaterThanOrEqualTo filter");
                 return Filter.greaterThanOrEqualTo(fieldPath, value);
             case ">":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating greaterThan filter");
                 return Filter.greaterThan(fieldPath, value);
             case "!=":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating notEqualTo filter");
                 return Filter.notEqualTo(fieldPath, value);
             case "array-contains":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating arrayContains filter");
                 return Filter.arrayContains(fieldPath, value);
             case "array-contains-any":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating arrayContainsAny filter");
                 return Filter.arrayContainsAny(fieldPath, (List<? extends Object>) value);
             case "in":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating inArray filter");
                 return Filter.inArray(fieldPath, (List<? extends Object>) value);
             case "not-in":
+                android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating notInArray filter");
                 return Filter.notInArray(fieldPath, (List<? extends Object>) value);
             default:
+                android.util.Log.w("QueryFieldFilterConstraint", "toFilter: unknown opStr '" + opStr + "', returning null");
                 return null;
         }
     }

@@ -286,12 +286,19 @@ public class FirebaseFirestore {
         String callbackId = options.getCallbackId();
         String databaseId = options.getDatabaseId();
 
+        // Debug logging
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: reference=" + reference + ", databaseId=" + databaseId);
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: compositeFilter=" + (compositeFilter != null ? "present" : "null"));
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: whereFilter=" + (whereFilter != null ? "present" : "null"));
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: queryConstraints.length=" + queryConstraints.length);
+
         Query query = getFirebaseFirestoreInstance(databaseId).collection(reference);
         
         // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
+            android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied composite filter");
         }
         
         // Apply where constraints from queryConstraints array
@@ -300,8 +307,10 @@ public class FirebaseFirestore {
                 // Combine both filters with "and" logic
                 Filter combinedFilter = Filter.and(compositeFilter.toFilter(), whereFilter);
                 query = getFirebaseFirestoreInstance(databaseId).collection(reference).where(combinedFilter);
+                android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied combined filter (composite + where)");
             } else {
                 query = query.where(whereFilter);
+                android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied where filter only");
             }
         }
         
