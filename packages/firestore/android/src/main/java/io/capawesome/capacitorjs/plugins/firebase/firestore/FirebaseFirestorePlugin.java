@@ -488,7 +488,7 @@ public class FirebaseFirestorePlugin extends Plugin {
                 return;
             }
             JSObject compositeFilter = call.getObject("compositeFilter");
-            JSArray queryConstraints = call.getArray("queryConstraints");
+            JSArray queryConstraints = call.getArray("constraints");
             Boolean includeMetadataChanges = call.getBoolean("includeMetadataChanges");
             String callbackId = call.getCallbackId();
             String databaseId = call.getString("databaseId");
@@ -534,7 +534,7 @@ public class FirebaseFirestorePlugin extends Plugin {
                 return;
             }
             JSObject compositeFilter = call.getObject("compositeFilter");
-            JSArray queryConstraints = call.getArray("queryConstraints");
+            JSArray queryConstraints = call.getArray("constraints");
             Boolean includeMetadataChanges = call.getBoolean("includeMetadataChanges");
             String callbackId = call.getCallbackId();
             String databaseId = call.getString("databaseId");
