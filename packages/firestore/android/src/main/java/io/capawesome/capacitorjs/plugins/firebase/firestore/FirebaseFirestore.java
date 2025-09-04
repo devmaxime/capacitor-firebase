@@ -257,8 +257,9 @@ public class FirebaseFirestore {
     public void addDocumentSnapshotListener(@NonNull AddDocumentSnapshotListenerOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
         String callbackId = options.getCallbackId();
+        String databaseId = options.getDatabaseId();
 
-        ListenerRegistration listenerRegistration = getFirebaseFirestoreInstance()
+        ListenerRegistration listenerRegistration = getFirebaseFirestoreInstance(databaseId)
             .document(reference)
             .addSnapshotListener(
                 options.isIncludeMetadataChanges() ? MetadataChanges.INCLUDE : MetadataChanges.EXCLUDE,
@@ -280,17 +281,43 @@ public class FirebaseFirestore {
     ) throws Exception {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
+        Filter whereFilter = options.getWhereFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
         String callbackId = options.getCallbackId();
+        String databaseId = options.getDatabaseId();
 
-        Query query = getFirebaseFirestoreInstance().collection(reference);
+        // Debug logging
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: reference=" + reference + ", databaseId=" + databaseId);
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: compositeFilter=" + (compositeFilter != null ? "present" : "null"));
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: whereFilter=" + (whereFilter != null ? "present" : "null"));
+        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: queryConstraints.length=" + queryConstraints.length);
+
+        Query query = getFirebaseFirestoreInstance(databaseId).collection(reference);
+        
+        // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
+            android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied composite filter");
         }
+        
+        // Apply where constraints from queryConstraints array
+        if (whereFilter != null) {
+            if (compositeFilter != null) {
+                // Combine both filters with "and" logic
+                Filter combinedFilter = Filter.and(compositeFilter.toFilter(), whereFilter);
+                query = getFirebaseFirestoreInstance(databaseId).collection(reference).where(combinedFilter);
+                android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied combined filter (composite + where)");
+            } else {
+                query = query.where(whereFilter);
+                android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied where filter only");
+            }
+        }
+        
+        // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
-                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());
+                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
             }
         }
 
@@ -314,17 +341,34 @@ public class FirebaseFirestore {
     ) throws Exception {
         String reference = options.getReference();
         QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
+        Filter whereFilter = options.getWhereFilter();
         QueryNonFilterConstraint[] queryConstraints = options.getQueryConstraints();
         String callbackId = options.getCallbackId();
+        String databaseId = options.getDatabaseId();
 
-        Query query = getFirebaseFirestoreInstance().collectionGroup(reference);
+        Query query = getFirebaseFirestoreInstance(databaseId).collectionGroup(reference);
+        
+        // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
+        
+        // Apply where constraints from queryConstraints array
+        if (whereFilter != null) {
+            if (compositeFilter != null) {
+                // Combine both filters with "and" logic
+                Filter combinedFilter = Filter.and(compositeFilter.toFilter(), whereFilter);
+                query = getFirebaseFirestoreInstance(databaseId).collectionGroup(reference).where(combinedFilter);
+            } else {
+                query = query.where(whereFilter);
+            }
+        }
+        
+        // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
-                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance());
+                query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
             }
         }
 

@@ -5,11 +5,13 @@ import static io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFires
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
+import com.google.firebase.firestore.Filter;
 import com.getcapacitor.JSObject;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryCompositeFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryEndAtConstraint;
+import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryFieldFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryLimitConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryOrderByConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryStartAtConstraint;
@@ -75,34 +77,90 @@ public class FirebaseFirestoreHelper {
         }
     }
 
+    @Nullable
+    public static Filter createFilterFromWhereConstraints(@Nullable JSArray queryConstraints)
+        throws JSONException {
+        android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: called with queryConstraints=" + (queryConstraints != null ? queryConstraints.toString() : "null"));
+        
+        if (queryConstraints == null) {
+            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: queryConstraints is null, returning null");
+            return null;
+        }
+        
+        ArrayList<Filter> filters = new ArrayList<>();
+        for (int i = 0; i < queryConstraints.length(); i++) {
+            JSObject queryConstraint = JSObject.fromJSONObject(queryConstraints.getJSONObject(i));
+            String queryConstraintType = queryConstraint.getString("type");
+            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: constraint " + i + " type=" + queryConstraintType);
+            
+            if ("where".equals(queryConstraintType)) {
+                android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: processing where constraint " + i + ": " + queryConstraint.toString());
+                QueryFieldFilterConstraint whereConstraint = new QueryFieldFilterConstraint(queryConstraint);
+                Filter filter = whereConstraint.toFilter();
+                if (filter != null) {
+                    filters.add(filter);
+                    android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: added filter for constraint " + i);
+                } else {
+                    android.util.Log.w("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: toFilter() returned null for constraint " + i);
+                }
+            }
+        }
+        
+        android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: found " + filters.size() + " where filters");
+        
+        if (filters.isEmpty()) {
+            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: no filters found, returning null");
+            return null;
+        } else if (filters.size() == 1) {
+            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: returning single filter");
+            return filters.get(0);
+        } else {
+            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: returning combined filter with " + filters.size() + " filters");
+            return Filter.and(filters.toArray(new Filter[0]));
+        }
+    }
+
     @NonNull
     public static QueryNonFilterConstraint[] createQueryNonFilterConstraintArrayFromJSArray(@Nullable JSArray queryConstraints)
         throws JSONException {
         if (queryConstraints == null) {
             return new QueryNonFilterConstraint[0];
         } else {
-            QueryNonFilterConstraint[] queryNonFilterConstraint = new QueryNonFilterConstraint[queryConstraints.length()];
+            // Use ArrayList to filter out unsupported constraint types
+            ArrayList<QueryNonFilterConstraint> validConstraints = new ArrayList<>();
             for (int i = 0; i < queryConstraints.length(); i++) {
                 JSObject queryConstraint = JSObject.fromJSONObject(queryConstraints.getJSONObject(i));
                 String queryConstraintType = queryConstraint.getString("type");
+                QueryNonFilterConstraint constraint = null;
                 switch (queryConstraintType) {
                     case "orderBy":
-                        queryNonFilterConstraint[i] = new QueryOrderByConstraint(queryConstraint);
+                        constraint = new QueryOrderByConstraint(queryConstraint);
                         break;
                     case "limit":
-                        queryNonFilterConstraint[i] = new QueryLimitConstraint(queryConstraint);
+                    case "limitToLast":
+                        constraint = new QueryLimitConstraint(queryConstraint);
                         break;
                     case "startAt":
                     case "startAfter":
-                        queryNonFilterConstraint[i] = new QueryStartAtConstraint(queryConstraint);
+                        constraint = new QueryStartAtConstraint(queryConstraint);
                         break;
                     case "endAt":
                     case "endBefore":
-                        queryNonFilterConstraint[i] = new QueryEndAtConstraint(queryConstraint);
+                        constraint = new QueryEndAtConstraint(queryConstraint);
+                        break;
+                    case "where":
+                        // Skip where constraints - they should be handled as filter constraints
+                        // This prevents null entries and allows them to be processed separately
+                        break;
+                    default:
+                        // Skip unsupported constraint types instead of creating null entries
                         break;
                 }
+                if (constraint != null) {
+                    validConstraints.add(constraint);
+                }
             }
-            return queryNonFilterConstraint;
+            return validConstraints.toArray(new QueryNonFilterConstraint[0]);
         }
     }
 

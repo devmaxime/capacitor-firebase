@@ -50,13 +50,43 @@ public class FirebaseFirestoreHelper {
                 case "endAt", "endBefore":
                     let queryEndAtConstraint = QueryEndAtConstraint(queryConstraint)
                     queryNonFilterConstraint.append(queryEndAtConstraint)
+                case "where":
+                    // Skip where constraints - they should be handled as filter constraints
+                    // This prevents null entries and allows them to be processed separately
+                    break
                 default:
+                    // Skip unsupported constraint types instead of creating null entries
                     break
                 }
             }
             return queryNonFilterConstraint
         } else {
             return []
+        }
+    }
+
+    public static func createFilterFromWhereConstraints(_ queryConstraints: [JSObject]?) -> Filter? {
+        guard let queryConstraints = queryConstraints else {
+            return nil
+        }
+        
+        var filters: [Filter] = []
+        for queryConstraint in queryConstraints {
+            let queryConstraintType = queryConstraint["type"] as? String
+            if queryConstraintType == "where" {
+                let whereConstraint = QueryFieldFilterConstraint(queryConstraint)
+                if let filter = whereConstraint.toFilter() {
+                    filters.append(filter)
+                }
+            }
+        }
+        
+        if filters.isEmpty {
+            return nil
+        } else if filters.count == 1 {
+            return filters[0]
+        } else {
+            return Filter.andFilter(filters)
         }
     }
 
