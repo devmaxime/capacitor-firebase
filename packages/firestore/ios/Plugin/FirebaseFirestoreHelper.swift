@@ -94,6 +94,13 @@ public class FirebaseFirestoreHelper {
         guard let value = value else {
             return nil
         }
+        
+        // Handle Firestore Timestamp objects specifically
+        if let timestamp = value as? Timestamp {
+            // Convert to string representation like Android: "Timestamp(seconds=..., nanoseconds=...)"
+            return "Timestamp(seconds=\(timestamp.seconds), nanoseconds=\(timestamp.nanoseconds))"
+        }
+        
         guard let value = JSTypes.coerceDictionaryToJSObject(["key": value]) as JSObject? else {
             return nil
         }
