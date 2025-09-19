@@ -5,9 +5,9 @@ import static io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFires
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
-import com.google.firebase.firestore.Filter;
 import com.getcapacitor.JSObject;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryCompositeFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryEndAtConstraint;
@@ -78,36 +78,48 @@ public class FirebaseFirestoreHelper {
     }
 
     @Nullable
-    public static Filter createFilterFromWhereConstraints(@Nullable JSArray queryConstraints)
-        throws JSONException {
-        android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: called with queryConstraints=" + (queryConstraints != null ? queryConstraints.toString() : "null"));
-        
+    public static Filter createFilterFromWhereConstraints(@Nullable JSArray queryConstraints) throws JSONException {
+        android.util.Log.d(
+            "FirebaseFirestoreHelper",
+            "createFilterFromWhereConstraints: called with queryConstraints=" +
+            (queryConstraints != null ? queryConstraints.toString() : "null")
+        );
+
         if (queryConstraints == null) {
             android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: queryConstraints is null, returning null");
             return null;
         }
-        
+
         ArrayList<Filter> filters = new ArrayList<>();
         for (int i = 0; i < queryConstraints.length(); i++) {
             JSObject queryConstraint = JSObject.fromJSONObject(queryConstraints.getJSONObject(i));
             String queryConstraintType = queryConstraint.getString("type");
-            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: constraint " + i + " type=" + queryConstraintType);
-            
+            android.util.Log.d(
+                "FirebaseFirestoreHelper",
+                "createFilterFromWhereConstraints: constraint " + i + " type=" + queryConstraintType
+            );
+
             if ("where".equals(queryConstraintType)) {
-                android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: processing where constraint " + i + ": " + queryConstraint.toString());
+                android.util.Log.d(
+                    "FirebaseFirestoreHelper",
+                    "createFilterFromWhereConstraints: processing where constraint " + i + ": " + queryConstraint.toString()
+                );
                 QueryFieldFilterConstraint whereConstraint = new QueryFieldFilterConstraint(queryConstraint);
                 Filter filter = whereConstraint.toFilter();
                 if (filter != null) {
                     filters.add(filter);
                     android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: added filter for constraint " + i);
                 } else {
-                    android.util.Log.w("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: toFilter() returned null for constraint " + i);
+                    android.util.Log.w(
+                        "FirebaseFirestoreHelper",
+                        "createFilterFromWhereConstraints: toFilter() returned null for constraint " + i
+                    );
                 }
             }
         }
-        
+
         android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: found " + filters.size() + " where filters");
-        
+
         if (filters.isEmpty()) {
             android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: no filters found, returning null");
             return null;
@@ -115,7 +127,10 @@ public class FirebaseFirestoreHelper {
             android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: returning single filter");
             return filters.get(0);
         } else {
-            android.util.Log.d("FirebaseFirestoreHelper", "createFilterFromWhereConstraints: returning combined filter with " + filters.size() + " filters");
+            android.util.Log.d(
+                "FirebaseFirestoreHelper",
+                "createFilterFromWhereConstraints: returning combined filter with " + filters.size() + " filters"
+            );
             return Filter.and(filters.toArray(new Filter[0]));
         }
     }

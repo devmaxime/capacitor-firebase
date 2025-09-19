@@ -159,6 +159,13 @@ public class FirebaseFirestore {
                 query = query.where(filter);
             }
         }
+
+        // Process where constraints from queryConstraints array
+        Filter whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints());
+        if (whereFilter != null) {
+            query = query.where(whereFilter);
+        }
+
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
                 query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
@@ -184,6 +191,13 @@ public class FirebaseFirestore {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
+
+        // Process where constraints from queryConstraints array
+        Filter whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints());
+        if (whereFilter != null) {
+            query = query.where(whereFilter);
+        }
+
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
                 query = queryConstraint.toQuery(query, getFirebaseFirestoreInstance(databaseId));
@@ -288,19 +302,22 @@ public class FirebaseFirestore {
 
         // Debug logging
         android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: reference=" + reference + ", databaseId=" + databaseId);
-        android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: compositeFilter=" + (compositeFilter != null ? "present" : "null"));
+        android.util.Log.d(
+            "FirebaseFirestore",
+            "addCollectionSnapshotListener: compositeFilter=" + (compositeFilter != null ? "present" : "null")
+        );
         android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: whereFilter=" + (whereFilter != null ? "present" : "null"));
         android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: queryConstraints.length=" + queryConstraints.length);
 
         Query query = getFirebaseFirestoreInstance(databaseId).collection(reference);
-        
+
         // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
             android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied composite filter");
         }
-        
+
         // Apply where constraints from queryConstraints array
         if (whereFilter != null) {
             if (compositeFilter != null) {
@@ -313,7 +330,7 @@ public class FirebaseFirestore {
                 android.util.Log.d("FirebaseFirestore", "addCollectionSnapshotListener: Applied where filter only");
             }
         }
-        
+
         // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
@@ -347,13 +364,13 @@ public class FirebaseFirestore {
         String databaseId = options.getDatabaseId();
 
         Query query = getFirebaseFirestoreInstance(databaseId).collectionGroup(reference);
-        
+
         // Apply composite filter from compositeFilter parameter
         if (compositeFilter != null) {
             Filter filter = compositeFilter.toFilter();
             query = query.where(filter);
         }
-        
+
         // Apply where constraints from queryConstraints array
         if (whereFilter != null) {
             if (compositeFilter != null) {
@@ -364,7 +381,7 @@ public class FirebaseFirestore {
                 query = query.where(whereFilter);
             }
         }
-        
+
         // Apply non-filter constraints (orderBy, limit, etc.)
         if (queryConstraints.length > 0) {
             for (QueryNonFilterConstraint queryConstraint : queryConstraints) {
