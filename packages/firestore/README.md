@@ -1047,7 +1047,7 @@ Remove all listeners for this plugin.
 | ---------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 5.2.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 5.2.0 |
-| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve. **Note**: Where constraints (`QueryFieldFilterConstraint`) are also supported and will be combined with any `compositeFilter` using "and" logic. | 5.2.0 |
+| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 5.2.0 |
 | **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
@@ -1057,7 +1057,7 @@ Remove all listeners for this plugin.
 | ---------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
 | **`reference`**        | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`).                 | 6.1.0 |
 | **`compositeFilter`**  | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | The filter to apply.                                                                                | 6.1.0 |
-| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve. **Note**: Where constraints (`QueryFieldFilterConstraint`) are also supported and will be combined with any `compositeFilter` using "and" logic. | 6.1.0 |
+| **`queryConstraints`** | <code>QueryNonFilterConstraint[]</code>                                                   | Narrow or order the set of documents to retrieve, but do not explicitly filter for document fields. | 6.1.0 |
 | **`databaseId`**       | <code>string</code>                                                                       | The database identifier for the Firestore instance. If not provided, the default database is used.  | 7.4.0 |
 
 
