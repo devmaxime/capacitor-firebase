@@ -170,6 +170,12 @@ private actor ListenerRegistrationMap {
                         query = query.whereFilter(filter)
                     }
                 }
+                
+                // Process where constraints from queryConstraints array
+                if let whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints()) {
+                    query = query.whereFilter(whereFilter)
+                }
+                
                 if !queryConstraints.isEmpty {
                     for queryConstraint in queryConstraints {
                         query = try await queryConstraint.toQuery(query: query)
@@ -200,6 +206,12 @@ private actor ListenerRegistrationMap {
                         query = query.whereFilter(filter)
                     }
                 }
+                
+                // Process where constraints from queryConstraints array
+                if let whereFilter = FirebaseFirestoreHelper.createFilterFromWhereConstraints(options.getOriginalQueryConstraints()) {
+                    query = query.whereFilter(whereFilter)
+                }
+                
                 if !queryConstraints.isEmpty {
                     for queryConstraint in queryConstraints {
                         query = try await queryConstraint.toQuery(query: query)

@@ -24,7 +24,7 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
         this.fieldPath = queryConstraint.getString("fieldPath", "");
         this.opStr = queryConstraint.getString("opStr", "");
         this.value = FirebaseFirestoreHelper.createObjectFromJSValue(queryConstraint.get("value"));
-        
+
         android.util.Log.d("QueryFieldFilterConstraint", "Constructor: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value);
     }
 
@@ -46,7 +46,7 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
     @Nullable
     public Filter toFilter() {
         android.util.Log.d("QueryFieldFilterConstraint", "toFilter: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value);
-        
+
         switch (opStr) {
             case "<":
                 android.util.Log.d("QueryFieldFilterConstraint", "toFilter: creating lessThan filter");

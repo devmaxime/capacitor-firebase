@@ -28,7 +28,7 @@ public class AddCollectionSnapshotListenerOptions {
     private String callbackId;
 
     private final boolean includeMetadataChanges;
-    
+
     @Nullable
     private String databaseId;
 
@@ -75,7 +75,7 @@ public class AddCollectionSnapshotListenerOptions {
     public String getCallbackId() {
         return callbackId;
     }
-    
+
     @Nullable
     public String getDatabaseId() {
         return databaseId;

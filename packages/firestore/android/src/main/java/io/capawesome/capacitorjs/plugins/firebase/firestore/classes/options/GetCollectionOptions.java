@@ -21,6 +21,9 @@ public class GetCollectionOptions {
     private QueryNonFilterConstraint[] queryConstraints;
 
     @Nullable
+    private JSArray originalQueryConstraints;
+
+    @Nullable
     private String databaseId;
 
     public GetCollectionOptions(
@@ -32,6 +35,7 @@ public class GetCollectionOptions {
         this.reference = reference;
         this.compositeFilter = FirebaseFirestoreHelper.createQueryCompositeFilterConstraintFromJSObject(compositeFilter);
         this.queryConstraints = FirebaseFirestoreHelper.createQueryNonFilterConstraintArrayFromJSArray(queryConstraints);
+        this.originalQueryConstraints = queryConstraints;
         this.databaseId = databaseId;
     }
 
@@ -53,5 +57,10 @@ public class GetCollectionOptions {
     @Nullable
     public String getDatabaseId() {
         return databaseId;
+    }
+
+    @Nullable
+    public JSArray getOriginalQueryConstraints() {
+        return originalQueryConstraints;
     }
 }
