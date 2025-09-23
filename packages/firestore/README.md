@@ -110,6 +110,34 @@ const callbackId = await FirebaseFirestore.addCollectionSnapshotListener(
 );
 ```
 
+### Timestamp Handling
+
+The plugin automatically handles timestamp value conversion for query constraints. When querying timestamp fields, you can use any of the following formats:
+
+1. **ISO 8601 strings**: `"2025-09-23T17:18:38.749Z"`
+2. **Unix timestamps in milliseconds**: `1758388718749`
+3. **JavaScript Date objects**: `new Date()`
+
+The plugin will automatically convert these to proper Firestore Timestamp objects for consistent comparison.
+
+Example with timestamp queries:
+```typescript
+const callbackId = await FirebaseFirestore.addCollectionSnapshotListener(
+  {
+    reference: 'events',
+    queryConstraints: [
+      // ISO 8601 string format
+      { type: 'where', fieldPath: 'start_date', opStr: '<=', value: '2025-09-23T17:18:38.749Z' },
+      // Unix timestamp in milliseconds format
+      { type: 'where', fieldPath: 'end_date', opStr: '>=', value: 1758388718749 }
+    ]
+  },
+  callback
+);
+```
+
+**Note**: For consistent behavior, it's recommended to use the same timestamp format across your application. The conversion ensures that mixed formats work correctly, but using a consistent format improves code maintainability.
+
 ## Demo
 
 A working example can be found here: [robingenz/capacitor-firebase-plugin-demo](https://github.com/robingenz/capacitor-firebase-plugin-demo)

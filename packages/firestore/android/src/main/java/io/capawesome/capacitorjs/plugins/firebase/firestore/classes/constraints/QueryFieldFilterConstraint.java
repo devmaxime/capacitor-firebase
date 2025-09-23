@@ -23,9 +23,12 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
     public QueryFieldFilterConstraint(JSObject queryConstraint) throws JSONException {
         this.fieldPath = queryConstraint.getString("fieldPath", "");
         this.opStr = queryConstraint.getString("opStr", "");
-        this.value = FirebaseFirestoreHelper.createObjectFromJSValue(queryConstraint.get("value"));
+        Object rawValue = queryConstraint.get("value");
+        this.value = FirebaseFirestoreHelper.convertTimestampValue(
+            FirebaseFirestoreHelper.createObjectFromJSValue(rawValue)
+        );
 
-        android.util.Log.d("QueryFieldFilterConstraint", "Constructor: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value);
+        android.util.Log.d("QueryFieldFilterConstraint", "Constructor: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value + " (class=" + (value != null ? value.getClass().getSimpleName() : "null") + ")");
     }
 
     @NonNull
