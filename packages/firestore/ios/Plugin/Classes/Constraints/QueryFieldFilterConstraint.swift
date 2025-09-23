@@ -10,7 +10,8 @@ import FirebaseFirestore
     public init(_ queryConstraint: JSObject) {
         self.fieldPath = queryConstraint["fieldPath"] as? String ?? ""
         self.opStr = queryConstraint["opStr"] as? String ?? ""
-        self.value = queryConstraint["value"] as AnyObject
+        let rawValue = queryConstraint["value"]
+        self.value = FirebaseFirestoreHelper.convertTimestampValue(rawValue) as AnyObject
     }
 
     public func toFilter() -> Filter? {

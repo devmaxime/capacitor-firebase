@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -16,10 +17,14 @@ import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryOrderByConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryStartAtConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.QueryNonFilterConstraint;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +70,63 @@ public class FirebaseFirestoreHelper {
         } else {
             return value;
         }
+    }
+
+    /**
+     * Converts a JavaScript timestamp value to a Firestore Timestamp object if it appears to be a timestamp.
+     * Handles ISO 8601 strings and Unix timestamps in milliseconds.
+     *
+     * @param value The JavaScript value that might be a timestamp
+     * @return A Firestore Timestamp object if the value is a recognizable timestamp format, otherwise the original value
+     */
+    public static Object convertTimestampValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        // Handle ISO 8601 timestamp strings (e.g., "2025-09-23T17:18:38.749Z")
+        if (value instanceof String) {
+            String stringValue = (String) value;
+            if (isISO8601Timestamp(stringValue)) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    Date date = sdf.parse(stringValue);
+                    return new Timestamp(date);
+                } catch (ParseException e) {
+                    // If parsing fails, try without milliseconds
+                    try {
+                        SimpleDateFormat sdfWithoutMs = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        sdfWithoutMs.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        Date date = sdfWithoutMs.parse(stringValue);
+                        return new Timestamp(date);
+                    } catch (ParseException e2) {
+                        android.util.Log.w("FirebaseFirestoreHelper", "Failed to parse ISO 8601 timestamp: " + stringValue);
+                        return value; // Return original value if parsing fails
+                    }
+                }
+            }
+        }
+
+        // Handle Unix timestamp in milliseconds (e.g., 1758388718749)
+        if (value instanceof Number) {
+            long longValue = ((Number) value).longValue();
+            // Check if this looks like a Unix timestamp in milliseconds
+            // Reasonable range: between year 2000 (946684800000L) and year 2100 (4102444800000L)
+            if (longValue >= 946684800000L && longValue <= 4102444800000L) {
+                return new Timestamp(new Date(longValue));
+            }
+        }
+
+        return value; // Return original value if not a timestamp
+    }
+
+    /**
+     * Checks if a string matches the ISO 8601 timestamp format.
+     */
+    private static boolean isISO8601Timestamp(String value) {
+        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.sss]Z
+        return value != null && value.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z");
     }
 
     @Nullable

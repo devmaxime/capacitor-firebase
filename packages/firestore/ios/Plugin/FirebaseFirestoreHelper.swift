@@ -3,6 +3,59 @@ import FirebaseFirestore
 import Capacitor
 
 public class FirebaseFirestoreHelper {
+    
+    /**
+     * Converts a JavaScript timestamp value to a Firestore Timestamp object if it appears to be a timestamp.
+     * Handles ISO 8601 strings and Unix timestamps in milliseconds.
+     */
+    public static func convertTimestampValue(_ value: Any?) -> Any? {
+        guard let value = value else {
+            return nil
+        }
+        
+        // Handle ISO 8601 timestamp strings (e.g., "2025-09-23T17:18:38.749Z")
+        if let stringValue = value as? String {
+            if isISO8601Timestamp(stringValue) {
+                let dateFormatter = ISO8601DateFormatter()
+                dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                
+                if let date = dateFormatter.date(from: stringValue) {
+                    return Timestamp(date: date)
+                } else {
+                    // Try without fractional seconds
+                    dateFormatter.formatOptions = [.withInternetDateTime]
+                    if let date = dateFormatter.date(from: stringValue) {
+                        return Timestamp(date: date)
+                    }
+                }
+            }
+        }
+        
+        // Handle Unix timestamp in milliseconds (e.g., 1758388718749)
+        if let numberValue = value as? NSNumber {
+            let longValue = numberValue.int64Value
+            // Check if this looks like a Unix timestamp in milliseconds
+            // Reasonable range: between year 2000 (946684800000) and year 2100 (4102444800000)
+            if longValue >= 946684800000 && longValue <= 4102444800000 {
+                let date = Date(timeIntervalSince1970: Double(longValue) / 1000.0)
+                return Timestamp(date: date)
+            }
+        }
+        
+        return value // Return original value if not a timestamp
+    }
+    
+    /**
+     * Checks if a string matches the ISO 8601 timestamp format.
+     */
+    private static func isISO8601Timestamp(_ value: String) -> Bool {
+        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.sss]Z
+        let pattern = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        let range = NSRange(location: 0, length: value.utf16.count)
+        return regex?.firstMatch(in: value, options: [], range: range) != nil
+    }
+
     public static func createHashMapFromJSObject(_ object: JSObject) -> [String: Any] {
         var map: [String: Any] = [:]
         for key in object.keys {

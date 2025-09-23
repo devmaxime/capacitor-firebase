@@ -30,4 +30,27 @@ class FirebaseFirestoreTests: XCTestCase {
         XCTAssertEqual(result?["string_field"] as? String, "test_string")
         XCTAssertEqual(result?["number_field"] as? Int, 42)
     }
+    
+    func testTimestampConversion() {
+        // Test ISO 8601 string conversion
+        let isoString = "2025-09-23T17:18:38.749Z"
+        let convertedISO = FirebaseFirestoreHelper.convertTimestampValue(isoString)
+        XCTAssertTrue(convertedISO is Timestamp, "ISO string should be converted to Timestamp")
+        
+        // Test Unix timestamp in milliseconds conversion
+        let unixTimestamp: Int64 = 1758388718749
+        let convertedUnix = FirebaseFirestoreHelper.convertTimestampValue(NSNumber(value: unixTimestamp))
+        XCTAssertTrue(convertedUnix is Timestamp, "Unix timestamp should be converted to Timestamp")
+        
+        // Test regular string (should not be converted)
+        let regularString = "not_a_timestamp"
+        let notConverted = FirebaseFirestoreHelper.convertTimestampValue(regularString)
+        XCTAssertTrue(notConverted is String, "Regular string should not be converted")
+        XCTAssertEqual(notConverted as? String, regularString)
+        
+        // Test regular number (should not be converted)
+        let regularNumber = 42
+        let notConvertedNumber = FirebaseFirestoreHelper.convertTimestampValue(regularNumber)
+        XCTAssertEqual(notConvertedNumber as? Int, regularNumber, "Regular number should not be converted")
+    }
 }
