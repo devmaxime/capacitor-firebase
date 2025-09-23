@@ -24,11 +24,20 @@ public class QueryFieldFilterConstraint implements QueryFilterConstraint {
         this.fieldPath = queryConstraint.getString("fieldPath", "");
         this.opStr = queryConstraint.getString("opStr", "");
         Object rawValue = queryConstraint.get("value");
-        this.value = FirebaseFirestoreHelper.convertTimestampValue(
-            FirebaseFirestoreHelper.createObjectFromJSValue(rawValue)
-        );
+        this.value = FirebaseFirestoreHelper.convertTimestampValue(FirebaseFirestoreHelper.createObjectFromJSValue(rawValue));
 
-        android.util.Log.d("QueryFieldFilterConstraint", "Constructor: fieldPath=" + fieldPath + ", opStr=" + opStr + ", value=" + value + " (class=" + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+        android.util.Log.d(
+            "QueryFieldFilterConstraint",
+            "Constructor: fieldPath=" +
+            fieldPath +
+            ", opStr=" +
+            opStr +
+            ", value=" +
+            value +
+            " (class=" +
+            (value != null ? value.getClass().getSimpleName() : "null") +
+            ")"
+        );
     }
 
     @NonNull
