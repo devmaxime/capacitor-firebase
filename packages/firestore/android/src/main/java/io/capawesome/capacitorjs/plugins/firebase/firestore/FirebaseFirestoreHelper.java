@@ -106,6 +106,18 @@ public class FirebaseFirestoreHelper {
                     }
                 }
             }
+
+            // Handle Unix timestamp that comes as string (for consistency with iOS)
+            try {
+                long longValue = Long.parseLong(stringValue);
+                // Check if this looks like a Unix timestamp in milliseconds
+                // Reasonable range: between year 2000 (946684800000L) and year 2100 (4102444800000L)
+                if (longValue >= 946684800000L && longValue <= 4102444800000L) {
+                    return new Timestamp(new Date(longValue));
+                }
+            } catch (NumberFormatException e) {
+                // Not a number string, continue to regular processing
+            }
         }
 
         // Handle Unix timestamp in milliseconds (e.g., 1758388718749)
@@ -125,8 +137,9 @@ public class FirebaseFirestoreHelper {
      * Checks if a string matches the ISO 8601 timestamp format.
      */
     private static boolean isISO8601Timestamp(String value) {
-        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.sss]Z
-        return value != null && value.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z");
+        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.s+]Z
+        // Allow 1-6 millisecond digits instead of exactly 3, to be more flexible
+        return value != null && value.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z");
     }
 
     @Nullable

@@ -42,6 +42,20 @@ class FirebaseFirestoreTests: XCTestCase {
         let convertedUnix = FirebaseFirestoreHelper.convertTimestampValue(NSNumber(value: unixTimestamp))
         XCTAssertTrue(convertedUnix is Timestamp, "Unix timestamp should be converted to Timestamp")
         
+        // Test Unix timestamp as string (potential iOS-specific case)
+        let unixTimestampString = "1758388718749"
+        let convertedUnixString = FirebaseFirestoreHelper.convertTimestampValue(unixTimestampString)
+        XCTAssertTrue(convertedUnixString is Timestamp, "Unix timestamp as string should be converted to Timestamp")
+        
+        // Test ISO 8601 with different millisecond digits
+        let isoString1Digit = "2025-09-23T17:18:38.7Z"
+        let convertedISO1 = FirebaseFirestoreHelper.convertTimestampValue(isoString1Digit)
+        XCTAssertTrue(convertedISO1 is Timestamp, "ISO string with 1 millisecond digit should be converted")
+        
+        let isoString6Digits = "2025-09-23T17:18:38.749123Z"
+        let convertedISO6 = FirebaseFirestoreHelper.convertTimestampValue(isoString6Digits)
+        XCTAssertTrue(convertedISO6 is Timestamp, "ISO string with 6 millisecond digits should be converted")
+        
         // Test regular string (should not be converted)
         let regularString = "not_a_timestamp"
         let notConverted = FirebaseFirestoreHelper.convertTimestampValue(regularString)
