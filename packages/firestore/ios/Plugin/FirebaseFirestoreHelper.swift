@@ -29,6 +29,16 @@ public class FirebaseFirestoreHelper {
                     }
                 }
             }
+            
+            // Handle Unix timestamp that comes as string (potential iOS-specific issue)
+            if let longValue = Int64(stringValue) {
+                // Check if this looks like a Unix timestamp in milliseconds
+                // Reasonable range: between year 2000 (946684800000) and year 2100 (4102444800000)
+                if longValue >= 946684800000 && longValue <= 4102444800000 {
+                    let date = Date(timeIntervalSince1970: Double(longValue) / 1000.0)
+                    return Timestamp(date: date)
+                }
+            }
         }
         
         // Handle Unix timestamp in milliseconds (e.g., 1758388718749)
@@ -49,8 +59,9 @@ public class FirebaseFirestoreHelper {
      * Checks if a string matches the ISO 8601 timestamp format.
      */
     private static func isISO8601Timestamp(_ value: String) -> Bool {
-        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.sss]Z
-        let pattern = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+        // Basic check for ISO 8601 format: YYYY-MM-DDTHH:mm:ss[.s+]Z
+        // Allow 1-6 millisecond digits instead of exactly 3, to be more flexible
+        let pattern = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$"
         let regex = try? NSRegularExpression(pattern: pattern)
         let range = NSRange(location: 0, length: value.utf16.count)
         return regex?.firstMatch(in: value, options: [], range: range) != nil
