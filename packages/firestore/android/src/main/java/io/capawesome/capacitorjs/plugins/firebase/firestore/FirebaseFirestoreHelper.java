@@ -50,11 +50,7 @@ public class FirebaseFirestoreHelper {
         JSObject object = new JSObject();
         for (String key : map.keySet()) {
             Object value = map.get(key);
-            if (value instanceof ArrayList) {
-                value = createJSArrayFromArrayList((ArrayList) value);
-            } else if (value instanceof Map) {
-                value = createJSObjectFromMap((Map<String, Object>) value);
-            }
+            value = convertFirestoreValueForJS(value);
             object.put(key, value);
         }
         return object;
@@ -271,12 +267,38 @@ public class FirebaseFirestoreHelper {
     private static JSArray createJSArrayFromArrayList(ArrayList arrayList) {
         JSArray array = new JSArray();
         for (Object value : arrayList) {
-            if (value instanceof Map) {
-                value = createJSObjectFromMap((Map<String, Object>) value);
-            }
+            value = convertFirestoreValueForJS(value);
             array.put(value);
         }
         return array;
+    }
+
+    /**
+     * Converts Firestore values to JavaScript-compatible values, handling nested structures recursively.
+     * This ensures that Firestore Timestamps are converted to string format like "Timestamp(seconds=..., nanoseconds=...)".
+     */
+    private static Object convertFirestoreValueForJS(Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        // Handle Firestore Timestamp objects specifically
+        if (value instanceof Timestamp) {
+            Timestamp timestamp = (Timestamp) value;
+            return "Timestamp(seconds=" + timestamp.getSeconds() + ", nanoseconds=" + timestamp.getNanoseconds() + ")";
+        }
+
+        // Handle nested Maps (dictionaries)
+        if (value instanceof Map) {
+            return createJSObjectFromMap((Map<String, Object>) value);
+        }
+
+        // Handle nested ArrayLists (arrays)
+        if (value instanceof ArrayList) {
+            return createJSArrayFromArrayList((ArrayList) value);
+        }
+
+        return value;
     }
 
     public static JSObject createSnapshotMetadataResult(DocumentSnapshot snapshot) {

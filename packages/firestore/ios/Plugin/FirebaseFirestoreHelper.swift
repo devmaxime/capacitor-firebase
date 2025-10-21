@@ -158,13 +158,30 @@ public class FirebaseFirestoreHelper {
         guard let value = value else {
             return nil
         }
-        
+
         // Handle Firestore Timestamp objects specifically
         if let timestamp = value as? Timestamp {
             // Convert to string representation like Android: "Timestamp(seconds=..., nanoseconds=...)"
             return "Timestamp(seconds=\(timestamp.seconds), nanoseconds=\(timestamp.nanoseconds))"
         }
-        
+
+        // Handle nested dictionaries (recursively process)
+        if let dict = value as? [String: Any] {
+            return createJSObjectFromHashMap(dict) as JSValue?
+        }
+
+        // Handle arrays (recursively process each element)
+        if let array = value as? [Any] {
+            var resultArray = JSArray()
+            for element in array {
+                if let processedElement = createJSValue(value: element) {
+                    resultArray.append(processedElement)
+                }
+            }
+            return resultArray as JSValue?
+        }
+
+        // Handle other values using Capacitor's coercion
         guard let value = JSTypes.coerceDictionaryToJSObject(["key": value]) as JSObject? else {
             return nil
         }
