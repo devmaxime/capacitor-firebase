@@ -40,6 +40,7 @@ This plugin has been updated with important bug fixes and enhancements:
 - **✅ Added `limitToLast` support**: `limitToLast` constraint type is now fully supported in snapshot listeners
 - **✅ Fixed multiple database support**: Constructor parameter mismatches that caused compilation errors have been resolved
 - **✅ iOS parity**: All Android fixes have been replicated to iOS for consistent behavior across platforms
+- **✅ DocumentReference field support**: DocumentReference values stored in document fields are now properly converted to objects with `id` and `path` properties across all platforms
 
 These fixes ensure that snapshot listeners work reliably with multiple Firestore databases and properly respect all query constraints including where clauses.
 
@@ -137,6 +138,42 @@ const callbackId = await FirebaseFirestore.addCollectionSnapshotListener(
 ```
 
 **Note**: For consistent behavior, it's recommended to use the same timestamp format across your application. The conversion ensures that mixed formats work correctly, but using a consistent format improves code maintainability.
+
+### DocumentReference Field Handling
+
+When Firestore documents contain fields that reference other documents (DocumentReference type), the plugin automatically converts them to a standardized format across all platforms (Android, iOS, and Web):
+
+```typescript
+// Example document with a DocumentReference field
+const result = await FirebaseFirestore.getDocument({
+  reference: 'posts/post123'
+});
+
+// If the document has a field like 'author' that points to another document,
+// it will be converted to:
+console.log(result.snapshot.data.author);
+// Output: { id: 'user456', path: 'users/user456' }
+```
+
+This standardized format provides:
+- **`id`**: The document's identifier within its collection
+- **`path`**: The full path to the referenced document
+
+You can use the `path` property with other plugin methods:
+```typescript
+// Fetch the referenced document
+const authorData = await FirebaseFirestore.getDocument({
+  reference: result.snapshot.data.author.path
+});
+```
+
+Or extract just the ID directly:
+```typescript
+const authorId = result.snapshot.data.author.id;
+console.log(authorId); // Output: 'user456'
+```
+
+**Note**: This conversion happens automatically for all methods that return document data, including `getDocument`, `getCollection`, `getCollectionGroup`, and all snapshot listeners.
 
 ## Demo
 
@@ -1166,8 +1203,9 @@ An options object that configures the behavior of {@link @firebase/firestore/lit
 
 This plugin currently has the following limitations:
 
-- The `Timestamp` data type is not yet supported (see https://github.com/capawesome-team/capacitor-firebase/issues/474). Use a `number` or a `string` instead.
+- The `Timestamp` data type is automatically converted to a string format `"Timestamp(seconds=..., nanoseconds=...)"` when retrieved from Firestore. When writing timestamps, use `number` (Unix milliseconds) or ISO 8601 `string` formats (see [Timestamp Handling](#timestamp-handling) section).
 - The `FieldValue` data type is not yet supported (see https://github.com/capawesome-team/capacitor-firebase/issues/443).
+- The `GeoPoint` data type is passed through as-is and may not serialize consistently across platforms.
 
 ## Changelog
 

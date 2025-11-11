@@ -165,6 +165,14 @@ public class FirebaseFirestoreHelper {
             return "Timestamp(seconds=\(timestamp.seconds), nanoseconds=\(timestamp.nanoseconds))"
         }
 
+        // Handle Firestore DocumentReference objects
+        if let documentReference = value as? DocumentReference {
+            var referenceObject = JSObject()
+            referenceObject["id"] = documentReference.documentID
+            referenceObject["path"] = documentReference.path
+            return referenceObject as JSValue?
+        }
+
         // Handle nested dictionaries (recursively process)
         if let dict = value as? [String: Any] {
             return createJSObjectFromHashMap(dict) as JSValue?

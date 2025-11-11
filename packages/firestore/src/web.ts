@@ -41,6 +41,7 @@ import {
 
 import type {
   AddCollectionGroupSnapshotListenerCallback,
+  AddCollectionGroupSnapshotListenerCallbackEvent,
   AddCollectionGroupSnapshotListenerOptions,
   AddCollectionSnapshotListenerCallback,
   AddCollectionSnapshotListenerCallbackEvent,
@@ -77,6 +78,43 @@ export class FirebaseFirestoreWeb
 {
   private readonly unsubscribesMap: Map<string, Unsubscribe> = new Map();
 
+  /**
+   * Recursively processes document data to convert DocumentReference objects
+   * to our standardized format with id and path properties
+   */
+  private processDocumentData(data: any): any {
+    if (data === null || data === undefined) {
+      return data;
+    }
+
+    // Handle DocumentReference objects from Firebase JS SDK
+    if (data && typeof data === 'object' && '_key' in data && 'firestore' in data) {
+      // This is likely a DocumentReference
+      if (typeof data.id === 'string' && typeof data.path === 'string') {
+        return {
+          id: data.id,
+          path: data.path,
+        };
+      }
+    }
+
+    // Handle arrays
+    if (Array.isArray(data)) {
+      return data.map(item => this.processDocumentData(item));
+    }
+
+    // Handle objects (but not special types like Date, etc.)
+    if (typeof data === 'object' && data.constructor === Object) {
+      const processed: any = {};
+      for (const [key, value] of Object.entries(data)) {
+        processed[key] = this.processDocumentData(value);
+      }
+      return processed;
+    }
+
+    return data;
+  }
+
   public async addDocument(
     options: AddDocumentOptions,
   ): Promise<AddDocumentResult> {
@@ -109,13 +147,14 @@ export class FirebaseFirestoreWeb
     const { reference } = options;
     const documentSnapshot = await getDoc(doc(firestore, reference));
     const documentSnapshotData = documentSnapshot.data();
+    const processedData = documentSnapshotData === undefined
+      ? null
+      : this.processDocumentData(documentSnapshotData);
     return {
       snapshot: {
         id: documentSnapshot.id,
         path: documentSnapshot.ref.path,
-        data: (documentSnapshotData === undefined
-          ? null
-          : documentSnapshotData) as T | null,
+        data: processedData as T | null,
         metadata: {
           hasPendingWrites: documentSnapshot.metadata.hasPendingWrites,
           fromCache: documentSnapshot.metadata.fromCache,
@@ -173,7 +212,7 @@ export class FirebaseFirestoreWeb
       snapshots: collectionSnapshot.docs.map(documentSnapshot => ({
         id: documentSnapshot.id,
         path: documentSnapshot.ref.path,
-        data: documentSnapshot.data() as T,
+        data: this.processDocumentData(documentSnapshot.data()) as T,
         metadata: {
           hasPendingWrites: documentSnapshot.metadata.hasPendingWrites,
           fromCache: documentSnapshot.metadata.fromCache,
@@ -194,7 +233,7 @@ export class FirebaseFirestoreWeb
       snapshots: collectionSnapshot.docs.map(documentSnapshot => ({
         id: documentSnapshot.id,
         path: documentSnapshot.ref.path,
-        data: documentSnapshot.data() as T,
+        data: this.processDocumentData(documentSnapshot.data()) as T,
         metadata: {
           hasPendingWrites: documentSnapshot.metadata.hasPendingWrites,
           fromCache: documentSnapshot.metadata.fromCache,
@@ -249,11 +288,12 @@ export class FirebaseFirestoreWeb
       },
       snapshot => {
         const data = snapshot.data();
+        const processedData = data === undefined ? null : this.processDocumentData(data);
         const event: AddDocumentSnapshotListenerCallbackEvent<T> = {
           snapshot: {
             id: snapshot.id,
             path: snapshot.ref.path,
-            data: (data === undefined ? null : data) as T | null,
+            data: processedData as T | null,
             metadata: {
               hasPendingWrites: snapshot.metadata.hasPendingWrites,
               fromCache: snapshot.metadata.fromCache,
@@ -290,7 +330,7 @@ export class FirebaseFirestoreWeb
           snapshots: snapshot.docs.map(documentSnapshot => ({
             id: documentSnapshot.id,
             path: documentSnapshot.ref.path,
-            data: documentSnapshot.data() as T,
+            data: this.processDocumentData(documentSnapshot.data()) as T,
             metadata: {
               hasPendingWrites: documentSnapshot.metadata.hasPendingWrites,
               fromCache: documentSnapshot.metadata.fromCache,
@@ -323,11 +363,11 @@ export class FirebaseFirestoreWeb
         source: options.source,
       },
       snapshot => {
-        const event: AddCollectionSnapshotListenerCallbackEvent<T> = {
+        const event: AddCollectionGroupSnapshotListenerCallbackEvent<T> = {
           snapshots: snapshot.docs.map(documentSnapshot => ({
             id: documentSnapshot.id,
             path: documentSnapshot.ref.path,
-            data: documentSnapshot.data() as T,
+            data: this.processDocumentData(documentSnapshot.data()) as T,
             metadata: {
               hasPendingWrites: documentSnapshot.metadata.hasPendingWrites,
               fromCache: documentSnapshot.metadata.fromCache,

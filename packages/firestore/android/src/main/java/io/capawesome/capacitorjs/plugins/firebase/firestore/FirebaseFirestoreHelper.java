@@ -288,6 +288,15 @@ public class FirebaseFirestoreHelper {
             return "Timestamp(seconds=" + timestamp.getSeconds() + ", nanoseconds=" + timestamp.getNanoseconds() + ")";
         }
 
+        // Handle Firestore DocumentReference objects
+        if (value instanceof com.google.firebase.firestore.DocumentReference) {
+            com.google.firebase.firestore.DocumentReference docRef = (com.google.firebase.firestore.DocumentReference) value;
+            JSObject referenceObject = new JSObject();
+            referenceObject.put("id", docRef.getId());
+            referenceObject.put("path", docRef.getPath());
+            return referenceObject;
+        }
+
         // Handle nested Maps (dictionaries)
         if (value instanceof Map) {
             return createJSObjectFromMap((Map<String, Object>) value);
